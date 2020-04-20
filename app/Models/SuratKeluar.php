@@ -28,4 +28,9 @@ class SuratKeluar extends Model
     {
       return $this->hasMany(Dokumen::class,'no_regist');
     }
+
+    public function statuss()
+    {
+        return $this->belongsTo(Status::class,'status','id_status');
+    }
 }

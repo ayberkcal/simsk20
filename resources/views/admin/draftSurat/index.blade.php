@@ -39,7 +39,11 @@
                             <td>{{$surat->tgl_surat}}</td>
                             <td>{{$surat->user->nama}}</td>
                             <td>{{$surat->layanan->nama_layanan}}</td>
-                            <td><b>{{$status_surat[$surat->status]}}</td>
+                            <td>
+                                <span class="{{ $surat->statuss->class }}">
+                                <b>{{$status_surat[$surat->status]}}
+                                </span>
+                            </td>
                             <td>
                                 <a class="btn btn-primary" href="{{route('draft.showDraft',$surat->no_regist)}}"><i class="icon-eye"></i></a>
                                 <a class="btn btn-success" href="{{route('draft.getFile',$surat->no_regist)}}"><i class="cil-color-border"></i> Sign</a>

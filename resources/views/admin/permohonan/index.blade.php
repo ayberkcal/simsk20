@@ -40,7 +40,11 @@
                             <td>{{$surat->no_regist}}</td>
                             <td>{{$surat->layanan->nama_layanan}}</td>
                             <td>{{$surat->user->nama}}</td>
-                            <td><b>{{$status_surat[$surat->status]}}</td>
+                            <td>
+                                <span class="{{ $surat->statuss->class }}">
+                                <b>{{$status_surat[$surat->status]}}
+                                </span>
+                            </td>
                             <td>{{$surat->updated_at}}</td>
                             <td>
                                 <form action="{{ route('permohonan.destroy',$surat->no_regist) }}" method="POST">    

@@ -52,7 +52,9 @@
                     </tr>
                     <tr bgcolor="honeydew">
                         <td><strong>Status</strong></td>
-                        <td>: <strong>{{ $status_surat[$surat->status] }}</strong></td>
+                        <td>: <span class="{{ $surat->statuss->class }}">
+                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Persyaratan</strong></td>

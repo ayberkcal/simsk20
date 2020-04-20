@@ -88,9 +88,11 @@
                         <td><strong>Keterangan</strong></td>
                         <td>: {{ $surat->keterangan }}</td>
                     </tr>
-                    <tr bgcolor="darkseagreen">
+                    <tr bgcolor="lightsteelblue">
                         <td><strong>Status</strong></td>
-                        <td>: <strong>{{ $status_surat[$surat->status] }}</strong></td>
+                        <td>: <span class="{{ $surat->statuss->class }}">
+                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                        </td>
                     </tr>    
                     <!-- <tr>
                         <td></td>

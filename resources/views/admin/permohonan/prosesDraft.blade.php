@@ -2,6 +2,7 @@
      
 @section('content') 
 <div class="col-md-12">
+  <div class="nav-tabs-boxed">
     <a class="btn btn-ghost-danger float-right" href="{{ route('permohonan.index') }}"><i class="cil-action-undo"> Cancel </i></a>
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
@@ -86,7 +87,7 @@
                     @if($surat->no_surat==NULL)             
                     <tr bgcolor="#F5FFFA">
                         <td><strong>Nomor Surat</strong></td>
-                        <td><input type="text" name="no_surat" class="form-control-sm col-5" value="{{$thn}}">
+                        <td><input type="text" name="no_surat" class="form-control-sm col-5" value="{{$thn}}"></td>
                     </tr>
                     @else
                     <tr bgcolor="#F5FFFA">
@@ -105,7 +106,9 @@
                     </tr>
                     <tr bgcolor="lightblue">
                         <td><strong>Status</strong></td>
-                        <td>: <strong>{{ $status_surat[$surat->status] }}</strong></td>
+                        <td>: <span class="{{ $surat->statuss->class }}">
+                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                        </td>
                     </tr>    
                     <tr>
                         <td></td>
@@ -122,6 +125,7 @@
           </div>
         </div>
     </div>
+  </div>
 </div>
 <div id="tolakP" class="modal modal-danger" role="dialog">
       <div class="modal-dialog">
