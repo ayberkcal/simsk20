@@ -49,7 +49,16 @@ class DraftSuratController extends Controller
 
         $thn = str_replace("[tahun]", date('Y'), $no);
 
-        return view('admin.permohonan.prosesDraft',compact('surat','status_surat','dokumen','thn'));
+        $verify = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                             ->where('dokumen.no_regist',$id)
+                             ->where('dokumen.verifikasi',1)
+                             ->count();
+
+        $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                             ->where('dokumen.no_regist',$id)
+                             ->count();
+
+        return view('admin.permohonan.prosesDraft',compact('surat','status_surat','dokumen','thn','verify','count'));
     }
 
     //proses draft

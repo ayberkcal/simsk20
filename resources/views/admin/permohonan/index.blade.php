@@ -59,7 +59,11 @@
                                 </form>
                             </td>
                             <td>
+                                @if($surat->status==0)
+                                    <!-- or disabled? -->
+                                @else
                                 <a class="btn btn-primary active" href="{{route('draft.getDraft',$surat->no_regist)}}"><i class="cil-envelope-open"> Proses</i></a>
+                                @endif
                             </td>
                           </tr>
                         @endforeach

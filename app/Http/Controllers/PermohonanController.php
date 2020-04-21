@@ -15,13 +15,30 @@ use File;
 
 class PermohonanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
+
     public function index() //getList Draft
     {
-        //ubah jadi order by updated_at
-        $surats = SuratKeluar::select('no_regist','kode_layanan','id_user','tgl_permohonan','tujuan','status','updated_at')->where('status','<=',2)->orderBy('updated_at','DESC')->get();
-        $status_surat = config('surat_keluar.status_surat');
+        $user= Auth()->user();
+        if ($user->hasRole('admin')) {
+            //ubah jadi order by updated_at
+            $surats = SuratKeluar::select('no_regist','kode_layanan','id_user','tgl_permohonan','tujuan','status','updated_at')->where('status','<=',2)->orderBy('updated_at','DESC')->get();
+            $status_surat = config('surat_keluar.status_surat');
 
-        return view('admin.permohonan.index',compact('surats','status_surat'));
+            return view('admin.permohonan.index',compact('surats','status_surat'));
+        }
+        elseif($user->hasRole('user')) {
+            //ubah jadi order by updated_at
+            $surats = SuratKeluar::select('no_regist','kode_layanan','id_user','tgl_permohonan','tujuan','status','updated_at')->where('status','=',2)->orderBy('updated_at','DESC')->get();
+            $status_surat = config('surat_keluar.status_surat');
+
+            return view('admin.permohonan.index',compact('surats','status_surat'));
+        }
+
     }
 
     public function create()    //go to create draft

@@ -15,6 +15,8 @@
         <div class="tab-pane active" id="surat1" role="tabpanel">
           <div class="container">
             <div class="card card-accent-primary" >
+              <div class="card-header">
+              <li class="list-group-item list-group-item-info"><span class="badge badge-pill badge-info">INFO</span> Periksa data permohonan pembuatan surat dan kelengkapan dokumen persyaratan!!</li></div>
               <div class="card-body">
                 <table class="table table-responsive-sm table-sm">
                   <tbody>
@@ -39,7 +41,7 @@
                         <td>: {{ $surat->tgl_permohonan }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Dokumen Persyaratan</strong></td>
+                        <td><strong>Dokumen Persyaratan</strong><small> (verifikasi dokumen persyaratan)</small></td>
                         <td>
                             <table class="table table-responsive-sm table-sm">
                               <thead>
@@ -113,7 +115,11 @@
                     <tr>
                         <td></td>
                         <td>
+                          @if($verify==$count)
                           <button class="btn btn-primary" type="submit"><i class="icon-cursor"></i> Proses</button>
+                          @else
+                          <button class="btn btn-secondary" type="" disabled=""><i class="icon-cursor"></i> Proses</button>
+                          @endif
                           <button class="tolakp-modal btn btn-danger" type="button" data-toggle="modal" data-target="#tolakP"><i class="cil-ban"></i> Tolak</button> 
                         </td>
                     </tr>
@@ -149,6 +155,7 @@
                 <label class="control-label col-md-3">Keterangan:</label>
                 <div class="col-sm-6">
                   <textarea type="text" class="form-control" id="ket" name="keterangan" maxlength="50" required></textarea>
+                  <small> (Alasan permohonan surat tidak dapat diproses) </small>
                 </div>
               </div>
             <div class="modal-footer">
@@ -164,7 +171,7 @@
 </div>
 @endsection 
 
-@section('js')
+@section('javascript')
 <script>
 $(document).ready(function() {
   $(document).on('click', '.tolakp-modal', function() {
