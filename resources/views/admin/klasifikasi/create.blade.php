@@ -23,7 +23,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_klasifikasi" placeholder="ex: KM" maxlength="2" required autofocus/>
+                        <input type="text" class="form-control" name="kode_klasifikasi" id="kode_klasifikasi" placeholder="ex: KM" maxlength="2" required autofocus/>
                     </div>
                 </div>    
                 <div class="form-group row">
@@ -40,5 +40,4 @@
                 </div>
             </form>
 </div>     
-   
 @endsection

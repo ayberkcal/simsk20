@@ -25,8 +25,7 @@ class PermohonanController extends Controller
     {
         $user= Auth()->user();
         if ($user->hasRole('admin')) {
-            //ubah jadi order by updated_at
-            $surats = SuratKeluar::select('no_regist','kode_layanan','id_user','tgl_permohonan','tujuan','status','updated_at')->where('status','<=',2)->orderBy('updated_at','DESC')->get();
+            $surats = SuratKeluar::where('status','<=',2)->orderBy('updated_at','DESC')->get();
             $status_surat = config('surat_keluar.status_surat');
 
             return view('admin.permohonan.index',compact('surats','status_surat'));
@@ -48,7 +47,7 @@ class PermohonanController extends Controller
         $dokumen = SyaratLayanan::where('kode_layanan','=','L001')->get(); //ganti $id
         // $dokumen = SyaratLayanan::all();
         $tipe_file = config('surat_keluar.tipe_file');
-        $field = TemplateField::where('kode_layanan','=','L001')->get();
+        $field = TemplateField::where('kode_layanan','=','L001')->get(); //ganti $id
         $tipe_field = config('surat_keluar.tipe_field');
         
         return view('admin.permohonan.create',compact('layanan','pemohon','dokumen','tipe_file','field','tipe_field'));
@@ -64,7 +63,7 @@ class PermohonanController extends Controller
         $test['tgl_permohonan'] = $request->tgl_permohonan;
         $test['tujuan'] = $request->tujuan;
         $test['status'] = 1;
-        $data = $request->only('nama_ortu','nik','semester'); //ganti field sesuai permintaan
+        $data = $request->only('nama_ortu','nik'); //ganti field sesuai permintaan
         $test['data'] = json_encode($data);
         $test['created_at'] = date(now());
         $test['updated_at'] = date(now());

@@ -42,19 +42,27 @@
                     <?php $datas=json_decode($surat->data);?> 
                     @foreach($datas as $key=>$value)
                     <tr>
-                        <td><strong>{{$key}}</strong></td>
+                        <td><strong>
+                            <?php 
+                            $a=$key; 
+                            $b=str_replace("_", " ", $a);
+                            $c=str_word_count($b);
+                            if ($c==1) {$d=strtoupper($b);} 
+                            else {$d=ucwords($b);} 
+                            echo $d;?>
+                            </strong></td>
                         <td>: {{ $value }}</strong></td>
                     </tr>
                     @endforeach
-                    <tr>
-                        <td><strong>Keterangan</strong></td>
-                        <td>: {{ $surat->keterangan }}</td>
-                    </tr>
                     <tr bgcolor="honeydew">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
                               <strong>{{ $status_surat[$surat->status] }}</strong></span>
                         </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Keterangan</strong></td>
+                        <td>: {{ $surat->keterangan }}</td>
                     </tr>
                     <tr>
                         <td><strong>Persyaratan</strong></td>

@@ -45,16 +45,7 @@
            
                                         @csrf   
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin menghapus layanan ini?')"><i class="icon-trash"></i></button> 
-
-                                        <div class="btn-group btn-group show" role="group">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</button>
-                                            <div class="dropdown-menu" aria-labelledby="userActions" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-91px, 35px, 0px);">             
-                                                <a href="{{route('layanan.show',$layanan->kode_layanan)}}" class="dropdown-item">Persyaratan</a>
-                                                <a href="{{route('layanan.show',$layanan->kode_layanan)}}" class="dropdown-item">Penanda Tangan</a>
-                                                <a href="{{route('layanan.show',$layanan->kode_layanan)}}" class="dropdown-item">Field</a>
-                                            </div>
-                                        </div> 
+                                        <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin menghapus layanan ini?')"><i class="icon-trash"></i></button>
                                       </div>
                                     </form>
                                 </td>

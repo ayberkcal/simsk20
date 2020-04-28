@@ -18,6 +18,7 @@
     <div class="tab-content">
         <div class="tab-pane active" id="surat1" role="tabpanel">
           <div class="container">
+           <div class="card card-accent-success" >
             <div class="card uper" >
               <div class="card-body">
                 <table class="table table-responsive-sm">
@@ -53,7 +54,15 @@
                     <?php $datas=json_decode($surat->data);?>
                     @foreach($datas as $key=>$value)
                     <tr>
-                        <td><strong>{{$key}}</strong></td>
+                        <td><strong>
+                            <?php 
+                            $a=$key; 
+                            $b=str_replace("_", " ", $a);
+                            $c=str_word_count($b);
+                            if ($c==1) {$d=strtoupper($b);} 
+                            else {$d=ucwords($b);} 
+                            echo $d;?>
+                        </strong></td>
                         <td>: {{ $value }}</strong></td>
                     </tr>
                     @endforeach
@@ -104,6 +113,7 @@
                  </table>
               </div>  
             </div>
+           </div>
           </div>
         </div>
         <div class="tab-pane" id="surat2" role="tabpanel">

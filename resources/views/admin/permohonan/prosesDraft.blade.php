@@ -14,7 +14,7 @@
     <div class="tab-content">
         <div class="tab-pane active" id="surat1" role="tabpanel">
           <div class="container">
-            <div class="card card-accent-primary" >
+            <div class="card card-accent-secondary" >
               <div class="card-header">
               <li class="list-group-item list-group-item-info"><span class="badge badge-pill badge-info">INFO</span> Periksa data permohonan pembuatan surat dan kelengkapan dokumen persyaratan!!</li></div>
               <div class="card-body">
@@ -36,12 +36,28 @@
                         <td><strong>Tujuan</strong></td>
                         <td>: {{ $surat->tujuan }}</td>
                     </tr>
+                    <!-- convert json to object php -->
+                    <?php $datas=json_decode($surat->data);?> 
+                    @foreach($datas as $key=>$value)
+                    <tr>
+                        <td><strong>
+                            <?php 
+                            $a=$key; 
+                            $b=str_replace("_", " ", $a);
+                            $c=str_word_count($b);
+                            if ($c==1) {$d=strtoupper($b);} 
+                            else {$d=ucwords($b);} 
+                            echo $d;?>
+                            </strong></td>
+                        <td>: {{ $value }}</strong></td>
+                    </tr>
+                    @endforeach
                     <tr>
                         <td><strong>Tanggal Permohonan</strong></td>
                         <td>: {{ $surat->tgl_permohonan }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Dokumen Persyaratan</strong><small> (verifikasi dokumen persyaratan)</small></td>
+                        <td><strong>Dokumen Persyaratan</strong><small><font color='blue'> (verifikasi dokumen persyaratan)</small></td>
                         <td>
                             <table class="table table-responsive-sm table-sm">
                               <thead>
@@ -100,18 +116,18 @@
                     @endif
                     <tr bgcolor="#F5FFFA">
                         <td><strong>Tanggal Surat</strong></td>
-                        <td><input type="text" name="tgl_surat" class="form-control-sm col-5" value="{{now()}}" readonly></td>
+                        <td><input type="text" name="tgl_surat" class="form-control-sm col-5" value="{{date('Y-m-d')}}" readonly></td>
                     </tr>
-                    <tr bgcolor="#F5FFFA">
-                        <td><strong>Keterangan</strong></td>
-                        <td>: {{ $surat->keterangan }}</td>
-                    </tr>
-                    <tr bgcolor="lightblue">
+                    <tr bgcolor="lightgray">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
                               <strong>{{ $status_surat[$surat->status] }}</strong></span>
                         </td>
-                    </tr>    
+                    </tr>
+                    <tr bgcolor="#F5FFFA">
+                        <td><strong>Keterangan</strong></td>
+                        <td>: {{ $surat->keterangan }}</td>
+                    </tr>  
                     <tr>
                         <td></td>
                         <td>

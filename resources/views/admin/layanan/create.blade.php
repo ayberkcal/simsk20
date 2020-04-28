@@ -8,6 +8,7 @@
             <a class="btn btn-ghost-danger float-right" href="{{ route('layanan.index') }}"><i class="cil-action-undo"> Cancel </i></a>
         </h4>
     </div>
+    <div id="alert_size"></div>
     <div class="card-body">
         @if ($errors->any())
         <div class="alert alert-danger">
@@ -47,7 +48,8 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Template File *</label>
                     <div class="col-md-10">
-                        <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" required/>
+                        <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" onchange="ValidateInput(this)" required/>
+                        <small id="size"><font color='blue'>(ukuran file maks = 200 KB, ekstensi file = .docx)</font></small>
                     </div>
                 </div>   
                 <div class="form-group row">
@@ -58,7 +60,7 @@
                             <option value="{{$syarat->id_syarat}}"> {{$syarat->nama_syarat}}</option>
                             @endforeach
                         </select>
-                        <small> (pilih satu atau lebih syarat)</small>
+                        <small><font color='blue'> (pilih satu atau lebih syarat jika ada)</font></small>
                     </div>
                 </div>   
                 <div class="form-group row" style="margin-bottom: 0px">
@@ -90,7 +92,7 @@
                       </div>
                 </div>     
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" >Kolom Tambahan<small> (sesuaikan dengan file template (.docx))</small></label>
+                    <label class="col-md-2 col-form-label" >Kolom Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
                     <div class="form-group row col-md-10">
                       <div class="col-md-2">
                         <a id="tambah-field" class="btn btn-success"><i class="icon-plus"></i></a>
@@ -170,5 +172,26 @@
             fId--;           
         });     
     });
+    function ValidateInput(file) {
+        var FileSize = file.files[0].size / 1024 ; // in KB
+        var pathFile = file.value;
+        var ekstensiOk = /(\.docx)$/i;
+        if (FileSize > 200) {
+            //alert('File size exceeds 200 KB');
+            $(file).val(''); //for clearing with Jquery
+            $('#vsize').remove();
+            $('#alert_size').append("<div class='alert alert-warning alert-dismissible fade show' role='alert' id='vsize'><span class='badge badge-pill badge-warning'>Warning</span> Ukuran file maks 200 KB!! <button class='close' type='button' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button></div>");
+        }
+        else if(!ekstensiOk.exec(pathFile)){
+            //alert('Silakan upload file yang memiliki ekstensi .docx');
+            $(file).val('');
+            $('#veks').remove();
+            $('#alert_size').append("<div class='alert alert-warning alert-dismissible fade show' role='alert' id='veks'><span class='badge badge-pill badge-warning'>Warning</span> Silakan upload file yang memiliki ekstensi .docx!! <button class='close' type='button' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button></div>");
+        }
+        else{
+            $('#vsize').remove();
+            $('#veks').remove();
+        }
+    }
   </script>
 @endsection

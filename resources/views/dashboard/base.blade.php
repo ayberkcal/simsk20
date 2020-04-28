@@ -6,7 +6,9 @@
 * Copyright (c) 2019 creativeLabs Łukasz Holeczek
 * Licensed under MIT (https://coreui.io/license)
 -->
-
+<?php
+  date_default_timezone_set("ASIA/JAKARTA");
+?>
 <html lang="en">
   <head>
     <base href="./">

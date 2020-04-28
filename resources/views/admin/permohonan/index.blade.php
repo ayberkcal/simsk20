@@ -26,7 +26,7 @@
                             <th>Pemohon</th>
                             <th width="140px">Status</th>
                             <th>updated_at</th>
-                            <th width="200px">Aksi(pemohon)</th>
+                            <th width="200px">Aksi(sivitas)</th>
                             <th width="100px">Aksi(petugas)</th>
                         </tr>
                         </thead>
@@ -42,8 +42,9 @@
                             <td>{{$surat->user->nama}}</td>
                             <td>
                                 <span class="{{ $surat->statuss->class }}">
-                                <b>{{$status_surat[$surat->status]}}
-                                </span>
+                                <b>{{$status_surat[$surat->status]}}</b>
+                                </span><br>
+                                <small><font color='grey'>{{$surat->keterangan}}</small>
                             </td>
                             <td>{{$surat->updated_at}}</td>
                             <td>

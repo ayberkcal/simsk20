@@ -36,6 +36,6 @@ return [
 		2 => 'date',
 		3 => 'number',
 		4 => 'email',
-		5 => 'textarea'
+		5 => 'password'
 	]
 ];

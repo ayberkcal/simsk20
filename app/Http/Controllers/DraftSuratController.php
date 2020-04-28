@@ -33,7 +33,7 @@ class DraftSuratController extends Controller
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
 
-        $format = SubKlasifikasi::where('kode_sub',"KM.00.01")->first();
+        $format = SubKlasifikasi::where('kode_sub',"KM.00.00")->first();
         $a = $format['penomoran'];
 
         //mengambil no urut (no urut ini dimulai dari 1 setiap klasifikasi per tahunnya)
@@ -94,7 +94,7 @@ class DraftSuratController extends Controller
                 'fakultas'=>'Teknologi Infomasi',
             ]);
         }
-
+        //data pemohon yang diambil dari tabel user
         $fieldUser = $surat->user->only('id_user','nama'); //ganti field sesuai permintaan
         $dataUserE = json_encode($fieldUser);
         $dataUserD = json_decode($dataUserE);
@@ -103,7 +103,7 @@ class DraftSuratController extends Controller
                 $key=>$value, 
             ]);
         }
-                
+        //data penandatangan  
         foreach ($user as $u) {
             $templateProcessor->setValues([
                 'pangkat'=>$u->pangkat,
@@ -113,12 +113,13 @@ class DraftSuratController extends Controller
             ]);
         }
 
+        //data dari tabel surat
         $templateProcessor->setValues([
             'no_surat' => $request->no_surat,
-            'tgl_surat' => now(),
+            'tgl_surat' => date('d F Y'),
             'tujuan' => $surat->tujuan,
         ]);
-        
+        //data dari field tambahan di kolom data di tabel surat
         $datas = json_decode($surat->data);
         foreach($datas as $key=>$value){
             $templateProcessor->setValues([
@@ -128,9 +129,11 @@ class DraftSuratController extends Controller
 
         $bln=date('m');
         if ($bln<="06") {
-            $thn_akademik=(date('Y')-1).'/'.date('Y');}
+            $thn_akademik=(date('Y')-1).'/'.date('Y');
+            $semester="GENAP";}
         elseif ($bln<="12") {
-            $thn_akademik=date('Y').'/'.(date('Y')+1);}
+            $thn_akademik=date('Y').'/'.(date('Y')+1);
+            $semester="GANJIL";}
 
         $nim=$surat->id_user;
         $jurusan=substr($nim, 3, 3);
@@ -143,6 +146,7 @@ class DraftSuratController extends Controller
         $templateProcessor->setValues([
             'thn_akademik' => $thn_akademik,
             'jurusan' => $jurusan,
+            'semester' => $semester,
         ]);
 
         //header("Content-Disposition: attachment; filename=template.docx");
