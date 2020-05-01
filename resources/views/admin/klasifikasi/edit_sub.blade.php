@@ -24,7 +24,8 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Kode Sub Klasifikasi *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="kode_sub" placeholder="ex: KM.00.00" value="{{ $sub->kode_sub }}" maxlength="8" required/>
+                    <input type="text" class="form-control" name="kode_sub" id="input_mask" value="{{ $sub->kode_sub }}" maxlength="8" required/>
+                    <small>ex: KM.00.00</small>
                 </div>
             </div>    
             <div class="form-group row">
@@ -59,3 +60,39 @@
     </div>   
 </div>
 @endsection 
+
+@section('javascript')
+<script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script>
+<script>
+document.getElementById("input_mask").addEventListener("focusin", focusIn);
+document.getElementById("input_mask").addEventListener("focusout", focusOut);
+
+function focusIn() {
+   $('#input_mask').inputmask({
+        mask: 'AA.99.99',
+        definitions: {
+            A: {
+                validator: "[A-Za-z]"
+            },
+        },            
+    });
+};
+
+function focusOut() {
+    var x = document.getElementById("input_mask");
+    var a = x.value.substring(5, 8);
+    if(a==".__"){
+        // x.value=x.value.replace(".__","");
+        $('#input_mask').inputmask({
+            mask: 'AA.99',
+            definitions: {
+                A: {
+                    validator: "[A-Za-z]"
+                },
+            },            
+        });
+    }
+    x.value=x.value.toUpperCase();
+};    
+</script>
+@endsection

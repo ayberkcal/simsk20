@@ -23,7 +23,8 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Sub Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_sub" maxlength="8" required autofocus/>
+                        <input type="text" class="form-control" name="kode_sub" maxlength="8" value="{{old('kode_sub')}}" id="input_mask" required/>
+                        <small>ex: KM.00.00</small>
                     </div>
                 </div>    
                 <div class="form-group row">
@@ -36,18 +37,18 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Nama Sub Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="sub_klasifikasi" required/>
+                        <input type="text" class="form-control" name="sub_klasifikasi" value="{{old('sub_klasifikasi')}}" required/>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Format Nomor Surat *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="penomoran" required/>
+                        <input type="text" class="form-control" name="penomoran" value="{{old('penomoran')}}" required/>
                         <small>ex: B/[no_urut]/UN.16.15/KM.00.00/[tahun]</small>
                     </div>
                 </div>     
                 <div class="card-footer">
-                    <button class="btn btn-sm btn-primary" type="submit">
+                    <button class="btn btn-sm btn-primary" type="submit" id="del">
                         <i class="icon-cursor"></i> Submit</button>
                     <button class="btn btn-sm btn-danger" type="reset">
                         <i class="cil-ban"></i> Reset</button>
@@ -57,12 +58,37 @@
 @endsection
 
 @section('javascript')
-<script src="jquery.1.7.2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+<script src="https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js"></script>
 <script>
-    $(document).ready(function($){
-        $('#kode_sub').mask("LL.99.99", {placeholder: "__.__.__"});
+document.getElementById("input_mask").addEventListener("focusin", focusIn);
+document.getElementById("input_mask").addEventListener("focusout", focusOut);
+
+function focusIn() {
+   $('#input_mask').inputmask({
+        mask: 'AA.99.99',
+        definitions: {
+            A: {
+                validator: "[A-Za-z]"
+            },
+        },            
     });
-    // $('kode_sub').mask('LL/99/99', {placeholder: "__/__/__"});
+};
+
+function focusOut() {
+    var x = document.getElementById("input_mask");
+    var a = x.value.substring(5, 8);
+    if(a==".__"){
+        // x.value=x.value.replace(".__","");
+        $('#input_mask').inputmask({
+            mask: 'AA.99',
+            definitions: {
+                A: {
+                    validator: "[A-Za-z]"
+                },
+            },            
+        });
+    }
+    x.value=x.value.toUpperCase();
+};    
 </script>
 @endsection

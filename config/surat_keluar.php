@@ -11,8 +11,7 @@ return [
 	],
 	'penandatangan' => [
 		1 => 'Penanda tangan',
-		2 => 'Pemaraf 1',
-		3 => 'Pemaraf 2'
+		2 => 'Pemaraf'
 	],
 	'tipe_file' => [
 		1 => '.pdf',

@@ -16,6 +16,9 @@ class SubKlasifikasiController extends Controller
 
     public function store(Request $request,$id)
     {
+        $request->validate([
+            'kode_sub' => 'required|unique:sub_klasifikasi'
+        ]);
         SubKlasifikasi::create($request->all());
         return redirect('/klasifikasi-sub/'.$id)->with('sukses','Berhasil Menambahkan Data.');
     }
@@ -30,6 +33,9 @@ class SubKlasifikasiController extends Controller
 
     public function update(Request $request, $id, $sub)
     {
+        $request->validate([
+            'kode_sub' => 'required|unique:sub_klasifikasi'
+        ]);
         $sub = SubKlasifikasi::find($sub);
         $sub->update($request->all());
         return redirect('/klasifikasi-sub/'.$id)->with('sukses','Berhasil Memperbaharui Data!!');

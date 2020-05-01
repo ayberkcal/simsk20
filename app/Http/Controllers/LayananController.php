@@ -62,13 +62,15 @@ class LayananController extends Controller
                 ]);
             }
         }
+        // validasi composite key belum
 
         if(($request->id_user)!=0){
             for ($i=0; $i < count($request->id_user); $i++) { 
                  PenandaTangan::create([
                     'kode_layanan' => $request->kode_layanan,
                     'id_user' => $request->id_user[$i],
-                    'status' => $request->status[$i]
+                    'status' => $request->status[$i],
+                    'urutan' => $i+1
                 ]);
             }
         }
@@ -85,6 +87,7 @@ class LayananController extends Controller
       }
       catch(\Exception $e){
         DB::rollBack();
+        dd($e);
         return redirect('/layanan')->with('error','Gagal Menambahkan Layanan Baru!!');  
       }
       DB::commit();
@@ -109,10 +112,12 @@ class LayananController extends Controller
         $sub = Subklasifikasi::all();
         $syarat = Syarat::all();
         $syarat1 = SyaratLayanan::where('kode_layanan','=',$id)->get();
-        $penandatangan = User::where('jenis_user','!=',1)->get();
-        $penandatangan1 = User::where('jenis_user','!=',1)->get();
+        // $penandatangan=User::where('jenis_user','!=',1)->get();
+        $penandatangan=PenandaTangan::where('kode_layanan',$id)->get();
+        $penandatangan1=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
-        return view('admin.layanan.edit',compact('layanan','sub','syarat','syarat1','penandatangan','penandatangan1','status_ttd'));
+        $tipe_field = config('surat_keluar.tipe_field');
+        return view('admin.layanan.edit',compact('layanan','sub','syarat','syarat1','penandatangan','penandatangan1','status_ttd','tipe_field'));
     }
 
     public function update(Request $request, $id)

@@ -16,7 +16,8 @@ class PenandaTangan extends Model
     protected $fillable = [
       'kode_layanan',
       'id_user',
-      'status'
+      'status',
+      'urutan'
     ];
 
     public function user()

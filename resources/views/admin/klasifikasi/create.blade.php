@@ -23,13 +23,13 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_klasifikasi" id="kode_klasifikasi" placeholder="ex: KM" maxlength="2" required autofocus/>
+                        <input type="text" class="form-control" name="kode_klasifikasi" id="kode_klasifikasi" placeholder="ex: KM" maxlength="2" value="{{old('kode_klasifikasi')}}" onkeyup="this.value = this.value.toUpperCase()" required autofocus/>
                     </div>
                 </div>    
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Nama Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="klasifikasi" placeholder="ex: Kemahasiswaan" required/>
+                        <input type="text" class="form-control" name="klasifikasi" placeholder="ex: Kemahasiswaan" value="{{old('klasifikasi')}}" required/>
                     </div>
                 </div>       
                 <div class="card-footer">

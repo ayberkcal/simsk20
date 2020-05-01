@@ -24,7 +24,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Klasifikasi *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_klasifikasi" placeholder="ex: KM" value="{{ $klasifikasi->kode_klasifikasi }}" maxlength="2" required/>
+                        <input type="text" class="form-control" name="kode_klasifikasi" placeholder="ex: KM" value="{{ $klasifikasi->kode_klasifikasi }}" maxlength="2" onkeyup="this.value = this.value.toUpperCase()" required/>
                     </div>
                 </div>    
                 <div class="form-group row">

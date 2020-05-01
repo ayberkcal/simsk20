@@ -53,7 +53,7 @@
                     </div>
                 </div>   
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" >Persyaratan</label>
+                    <label class="col-md-2 col-form-label">Persyaratan</label>
                     <div class="col-md-10">
                         <select name="id_syarat[]" class="form-control" id="syarats" multiple="multiple">
                             @foreach($syarat as $syarat)
@@ -63,8 +63,9 @@
                         <small><font color='blue'> (pilih satu atau lebih syarat jika ada)</font></small>
                     </div>
                 </div>   
+                <!-- baru bisa untuk 1 penandatangan -->
                 <div class="form-group row" style="margin-bottom: 0px">
-                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *</label>
+                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hirarki jabatan)</font></small></label>
                       <div class="form-group row col-md-8">
                         <div class="col-md-6" id="h-ttd">
                           <select class="form-control" name="id_user[]" id="id_user" required>
@@ -78,12 +79,8 @@
                             <label for="status">Status *</label>
                         </div>
                         <div class="col-md-4" id="h-status">
-                            <select class="form-control" name="status[]" id="status" required>
-                                <option value="" disabled selected>--Pilih--</option>
-                              @foreach($status_ttd as $key=>$value)
-                                <option value="{{$key}}">{{$value}}</option>
-                              @endforeach
-                            </select>
+                              <input hidden class="form-control" name="status[]" id="status" required value="1" />
+                              <input type="text" class="form-control" value="penandatangan" disabled>
                         </div>
                       </div>
                       <div class="box-footer">

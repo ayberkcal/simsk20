@@ -22,6 +22,9 @@ class SyaratController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nama_syarat' => 'required|unique:syarat'
+        ]);
         Syarat::create($request->all());
         return redirect('/syarat')->with('sukses','Berhasil Menambahkan Data.');
     }
@@ -35,6 +38,9 @@ class SyaratController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nama_syarat' => 'required|unique:syarat'
+        ]);
         $syarat = Syarat::find($id);
         $syarat->update($request->all());
         return redirect('/syarat')->with('sukses','Berhasil Memperbaharui Data!!');

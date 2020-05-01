@@ -21,8 +21,9 @@ class KlasifikasiController extends Controller
 
     public function store(Request $request)
     {
+
         $validasi=$request->validate([
-            'kode_klasifikasi' => 'required|unique',
+            'kode_klasifikasi' => 'required|unique:klasifikasi',
             'klasifikasi' => 'required'
         ]);
 
@@ -39,7 +40,7 @@ class KlasifikasiController extends Controller
     public function update(Request $request, klasifikasi $klasifikasi)
     {
         $request->validate([
-            'kode_klasifikasi' => 'required',
+            'kode_klasifikasi' => 'required|unique:klasifikasi',
             'klasifikasi' => 'required'
         ]);
 
