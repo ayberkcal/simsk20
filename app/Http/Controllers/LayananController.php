@@ -95,10 +95,10 @@ class LayananController extends Controller
     }
 
     public function show($id)
-    {
+    {   
         $layanan = Layanan::find($id);
         $syarat = SyaratLayanan::where('kode_layanan','=',$id)->get();
-        $penandatangan = PenandaTangan::where('kode_layanan','=',$id)->orderBy('status','asc')->get();
+        $penandatangan = PenandaTangan::where('kode_layanan','=',$id)->orderBy('urutan','asc')->get();
         $tipe_file = config('surat_keluar.tipe_file');
         $status_ttd = config('surat_keluar.penandatangan');
         $field = TemplateField::where('kode_layanan',$id)->get();
@@ -108,16 +108,24 @@ class LayananController extends Controller
 
     public function edit($id)
     {
+        $urutan = [];
         $layanan = Layanan::find($id);
         $sub = Subklasifikasi::all();
         $syarat = Syarat::all();
         $syarat1 = SyaratLayanan::where('kode_layanan','=',$id)->get();
         // $penandatangan=User::where('jenis_user','!=',1)->get();
-        $penandatangan=PenandaTangan::where('kode_layanan',$id)->get();
-        $penandatangan1=User::where('jenis_user','!=',1)->get();
+        $penandatangan=PenandaTangan::where('kode_layanan',$id)->orderBy('urutan','asc')->get();
+        $jmlh=PenandaTangan::where('kode_layanan',$id)->count();
+        
+        foreach ($layanan->penandatangan as $layanansigner) {
+          
+            $urutan[] = $layanansigner->id_user;
+
+        }
+ $penandatangan1=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
         $tipe_field = config('surat_keluar.tipe_field');
-        return view('admin.layanan.edit',compact('layanan','sub','syarat','syarat1','penandatangan','penandatangan1','status_ttd','tipe_field'));
+        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','tipe_field'));
     }
 
     public function update(Request $request, $id)
@@ -125,9 +133,9 @@ class LayananController extends Controller
       DB::beginTransaction();
       try{
         $layanan = Layanan::findOrFail($id);
-        $layanan->kode_layanan = $request->input('kode_layanan');
-        $layanan->kode_sub = $request->input('kode_sub');
-        $layanan->nama_layanan = $request->input('nama_layanan');
+        $layanan->kode_layanan = $request->kode_layanan;
+        $layanan->kode_sub = $request->kode_sub;
+        $layanan->nama_layanan = $request->nama_layanan;
         if (empty($request->file('template_file'))) {
             $layanan->template_file = $layanan->template_file;
         }
@@ -141,6 +149,10 @@ class LayananController extends Controller
             $layanan->template_file = $newName;
         }
         $layanan->save();
+
+        
+
+
       }
       catch(\Exception $e){
         DB::rollBack();

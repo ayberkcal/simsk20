@@ -42,7 +42,7 @@
                             <td>{{$surat->user->nama}}</td>
                             <td>
                                 <span class="{{ $surat->statuss->class }}">
-                                <b>{{$status_surat[$surat->status]}}</b>
+                                {{$status_surat[$surat->status]}}
                                 </span><br>
                                 <small><font color='grey'>{{$surat->keterangan}}</small>
                             </td>
@@ -51,11 +51,19 @@
                                 <form action="{{ route('permohonan.destroy',$surat->no_regist) }}" method="POST">    
                                   <div class="btn-group">
                                     <a class="btn btn-primary" href="{{route('permohonan.show',$surat->no_regist) }}"><i class="icon-eye"></i></a>
+                                    @if($surat->status==1)
                                     <a class="btn btn-info" href="{{ route('permohonan.edit',$surat->no_regist) }}"><i class="icon-note"></i></a>
+                                    @else
+                                    <button class="btn btn-light" type="button" disabled=""><i class="icon-note"></i></button>
+                                    @endif
                                     
                                     @csrf   
                                     @method('DELETE')
+                                    @if($surat->status<=1)
                                     <button type="submit" class="btn btn-danger"  onclick="return confirm('Yakin membatalkan permohonan ini?')"><i class="icon-trash"> Batalkan</i></button>
+                                     @else
+                                    <button class="btn btn-light" type="button" disabled=""><i class="icon-trash"></i> Batalkan</button>
+                                    @endif
                                   </div>
                                 </form>
                             </td>

@@ -50,7 +50,7 @@
                     <div class="col-md-10">
                       <a href="{{url('file/template/'.$layanan->template_file)}}">
                         <i class="cil-description"></i> {{$layanan->template_file}}</a>
-                      <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" onchange="ValidateInput(this)" required/>
+                      <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" onchange="ValidateInput(this)" value="$layanan->template_file" />
                       <small id="size"><font color='blue'>(ukuran file maks = 200 KB, ekstensi file = .docx)</font></small>
                     </div>
                 </div>   
@@ -66,33 +66,39 @@
                     </div>
                 </div>   
                 <!-- baru bisa untuk 1 penandatangan -->
-                <div class="form-group row" style="margin-bottom: 0px">
+                <div class="form-group row"  style="margin-bottom: 0px">
                     <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hirarki jabatan)</font></small></label>
-                      <div class="form-group row col-md-8">
+                      <div class="form-group row col-md-8" style="margin-bottom: 0px">          
                         @foreach($penandatangan as $penandatangan)
-                            @if($layanan->penandatangan->containsStrict('id_user',$penandatangan->id_user))
-                        <div class="col-md-6" id="h-ttd">
-                          <!-- perulangan syarat blum muncul -->
-                          
-                              <select class="form-control" name="id_user[]" id="id_user" required>
-                                <option value="{{$penandatangan->id_user}}" selected="selected" >{{$penandatangan->user->nama}}</option>
-                              </select>
-                           
-                        </div>
-                        <div class="col-md-2 col-form-label" >
+                          <div class="col-md-6">
+                            <select class="form-control" name="id_user[]" id="id_user" required>    
+                              @foreach($penandatangan1 as $ttd)
+                                <option value="{{$ttd->id_user}}"}} @if($ttd->id_user==$penandatangan->id_user) selected="true" @endif>{{$ttd->nama}}</option>
+                              @endforeach 
+                            </select>
+                          </div>
+                          <div class="col-md-2 col-form-label" >
                             <label for="status">Status *</label>
-                        </div>
-                        <div class="col-md-4" id="h-status">
+                          </div>
+                          <div class="col-md-4">
                               <input hidden class="form-control" name="status[]" id="status" required value="{{$penandatangan->status}}" />
                               <input type="text" class="form-control" readonly value="{{$status_ttd[$penandatangan->status]}}">
-                        </div>
-                         @endif
-                          @endforeach
+                          </div>
+                        @endforeach
                       </div>
                       <div class="box-footer">
                         <a id="hapus-ttd" class="btn btn-danger"><i class="icon-trash"></i></a>
                         <a id="tambah-ttd" class="btn btn-success"><i class="icon-plus"></i></a>
                       </div>
+                      <div class="col-md-2"></div>
+                      <div class="form-group row col-md-8">          
+                          <div class="col-md-6" id="h-ttd"></div>
+                          <div class="col-md-2 col-form-label" >
+                            
+                          </div>
+                          <div class="col-md-4" id="h-status" ></div>
+                      </div>
+                      
                 </div>    
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label" >Kolom Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>

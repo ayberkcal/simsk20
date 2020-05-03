@@ -71,12 +71,12 @@
                     <tr bgcolor="lightblue">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                              {{ $status_surat[$surat->status] }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td><strong>File</strong></td>
-                        <td>: <a href="{{url('file/surat/'.$surat->nama_file)}}"><i class="cil-description"></i> {{$surat->nama_file}}</a></td>
+                        <td>: <a href="{{url('file/draft/'.$surat->nama_file)}}"><i class="cil-description"></i> {{$surat->nama_file}}</a></td>
                     </tr>                      
                   </tbody>
                 </table>

@@ -11,10 +11,7 @@ use App\Models\TemplateField;
 use App\Models\Penandatangan;
 use TemplateProcessor;
 use IOFactory;
-use setasign;
 use Dompdf\Dompdf;
-
-
 require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');
 
 class DraftSuratController extends Controller
@@ -241,23 +238,24 @@ class DraftSuratController extends Controller
     }
 
     public function sign(Request $request, $id)
-    {
-            require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');  
-            $surat = App\Models\SuratKeluar::find($id);
+    {  
+        DB::beginTransaction();
+        try{   
+            $surat = SuratKeluar::find($id);
 
             // create a Http writer (file name)
-            $writer = new SetaPDF_Core_Writer_Http('../nama_file.pdf', true);
+            $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true);
             // load document by filename
-            $document = SetaPDF_Core_Document::loadByFilename('../public/file/'.$surat->nama_file, $writer);
+            $document = \SetaPDF_Core_Document::loadByFilename('../public/file/draft/'.$surat->nama_file, $writer);
 
             // create a signer instance for the document
-            $signer = new SetaPDF_Signer($document);
+            $signer = new \SetaPDF_Signer($document);
 
             // add a field with the name "Signature" to the top left of page 1
             $signer->addSignatureField(
                 'Signature',                    // Name of the signature field
                 1,                              // put appearance on page 1
-                SetaPDF_Signer_SignatureField::POSITION_LEFT_TOP,
+                \SetaPDF_Signer_SignatureField::POSITION_LEFT_TOP,
                 array('x' => 270, 'y' => -520),   // Translate the position (x 50, y -80 -> 50 points right, 80 points down)
                 180,                            // Width - 180 points
                 70                              // Height - 50 points
@@ -279,11 +277,11 @@ class DraftSuratController extends Controller
 
             // error handling
             if (false === $pfxRead) {
-                throw new Exception('The certificate could not be read.');
+                throw new \Exception('The certificate could not be read.');
             }
 
             // create e.g. a PAdES module instance
-            $module = new SetaPDF_Signer_Signature_Module_Pades();
+            $module = new \SetaPDF_Signer_Signature_Module_Pades();
             // pass the certificate ...
             $module->setCertificate($pkcs12['cert']);
             // ...and private key to the module
@@ -295,22 +293,22 @@ class DraftSuratController extends Controller
             }
 
             // create a Signature appearance
-            $visibleAppearance = new SetaPDF_Signer_Signature_Appearance_Dynamic($module);
+            $visibleAppearance = new \SetaPDF_Signer_Signature_Appearance_Dynamic($module);
             // create a font instance for the signature appearance
-            $font = new SetaPDF_Core_Font_TrueType_Subset(
+            $font = new \SetaPDF_Core_Font_TrueType_Subset(
                 $document,
                 '../public/file/DejaVuSans.ttf'
             );
             // set the font
             $visibleAppearance->setFont($font);
             // choose a document to get the background from and convert the art box to an xObject
-            $backgroundDocument = SetaPDF_Core_Document::loadByFilename('../public/file/logo.pdf');
+            $backgroundDocument = \SetaPDF_Core_Document::loadByFilename('../public/file/logo_.pdf');
             $backgroundXObject = $backgroundDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
             // set the background with 50% opacity
             $visibleAppearance->setBackgroundLogo($backgroundXObject, .5);
 
             // choose a document with a handwritten signature
-            $signatureDocument = SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf');
+            $signatureDocument = \SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf');
             $signatureXObject = $signatureDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
             // set the signature xObject as graphic
             $visibleAppearance->setGraphic($signatureXObject);
@@ -321,6 +319,14 @@ class DraftSuratController extends Controller
             // sign the document
             $signer->sign($module);
 
-             $suratUpdate = App\Models\SuratKeluar::where('no_regist','=',$id)->update(['nama_file' => 'surat_'.$id.'.pdf' , 'status' => 5]);
+            $suratUpdate = SuratKeluar::where('no_regist','=',$id)->update(['nama_file' => 'surat_'.$id.'.pdf' , 'status' => 5]);
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            dd($e);
+            return redirect('/draft/'.$id.'/getFile')->with('error','Gagal Menandatangani!!');  
+        }
+        DB::commit();
+        return redirect('/draft')->with('info','Draft surat no_regist: '.$id.' telah selesai!');        
     }
 }

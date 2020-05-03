@@ -76,7 +76,7 @@
                                   <tr>
                                     <td>{{++$no}}</td>
                                     <td>{{$dokumen->syarat->nama_syarat}} ({{$dokumen->verifikasi}})</td>
-                                    <td><a href="{{url('file/dokumen/'.$dokumen->nama_file)}}">
+                                    <td><a href="{{url('file/draft/'.$dokumen->nama_file)}}">
                                         <i class="cil-file"></i> {{$dokumen->nama_file}}</a>
                                     </td>
                                   </tr>
@@ -96,7 +96,7 @@
                     <tr bgcolor="lightsteelblue">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                              {{ $status_surat[$surat->status] }}</span>
                         </td>
                     </tr>   
                     <tr>

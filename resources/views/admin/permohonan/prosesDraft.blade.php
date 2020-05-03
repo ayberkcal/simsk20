@@ -121,7 +121,7 @@
                     <tr bgcolor="lightgray">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              <strong>{{ $status_surat[$surat->status] }}</strong></span>
+                              {{ $status_surat[$surat->status] }}</span>
                         </td>
                     </tr>
                     <tr bgcolor="#F5FFFA">

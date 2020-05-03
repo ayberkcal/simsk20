@@ -146,93 +146,9 @@ Route::group(['middleware' => ['get.menu']], function () {
 
         //penandatanganan
         Route::get('draft/{draft}/getFile','DraftSuratController@getFile')->name('draft.getFile');
-        //Route::put('draft-sign/{draft}','DraftSuratController@sign')->name('draft.sign');
+        Route::put('draft-sign/{draft}','DraftSuratController@sign')->name('draft.sign');
 
         //manajemen surat keluar
         Route::resource('suratkeluar','SuratKeluarController');
-
-        //sign belum pindah ke controller
-        Route::put('draft-sign/{draft}',function(Request $request, $id){
-            require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');
-            $surat = App\Models\SuratKeluar::find($id);
-
-            // create a Http writer (file name)
-            $writer = new SetaPDF_Core_Writer_Http('../nama_file.pdf', true);
-            // load document by filename
-            $document = SetaPDF_Core_Document::loadByFilename('../public/file/draft/'.$surat->nama_file, $writer);
-
-            // create a signer instance for the document
-            $signer = new SetaPDF_Signer($document);
-
-            // add a field with the name "Signature" to the top left of page 1
-            $signer->addSignatureField(
-                'Signature',                    // Name of the signature field
-                1,                              // put appearance on page 1
-                SetaPDF_Signer_SignatureField::POSITION_LEFT_TOP,
-                array('x' => 260, 'y' => -580),   // Translate the position (x 50, y -80 -> 50 points right, 80 points down)
-                180,                            // Width - 180 points
-                70                              // Height - 50 points
-            );
-
-            // set some signature properties
-            $signer->setReason("Just for testing");
-            $signer->setLocation('setasign.com');
-            //$signer->setContactInfo('+49 5351 3803603');
-
-
-            // read certificate and private key from the PFX file
-            $pkcs12 = array();
-            $pfxRead = openssl_pkcs12_read(
-                file_get_contents('../public/file/aura24011998@gmail.com.p12'),
-                $pkcs12,
-                $request->password
-            );
-
-            // error handling
-            if (false === $pfxRead) {
-                throw new Exception('The certificate could not be read.');
-            }
-
-            // create e.g. a PAdES module instance
-            $module = new SetaPDF_Signer_Signature_Module_Pades();
-            // pass the certificate ...
-            $module->setCertificate($pkcs12['cert']);
-            // ...and private key to the module
-            $module->setPrivateKey($pkcs12['pkey']);
-
-            // pass extra certificates if included in the PFX file
-            if (isset($pkcs12['extracerts']) && count($pkcs12['extracerts'])) {
-                $module->setExtraCertificates($pkcs12['extracerts']);
-            }
-
-            // create a Signature appearance
-            $visibleAppearance = new SetaPDF_Signer_Signature_Appearance_Dynamic($module);
-            // create a font instance for the signature appearance
-            $font = new SetaPDF_Core_Font_TrueType_Subset(
-                $document,
-                '../public/file/DejaVuSans.ttf'
-            );
-            // set the font
-            $visibleAppearance->setFont($font);
-            // choose a document to get the background from and convert the art box to an xObject
-            $backgroundDocument = SetaPDF_Core_Document::loadByFilename('../public/file/logo_.pdf');
-            $backgroundXObject = $backgroundDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
-            // set the background with 50% opacity
-            $visibleAppearance->setBackgroundLogo($backgroundXObject, .8);
-
-            // choose a document with a handwritten signature
-            $signatureDocument = SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf');
-            $signatureXObject = $signatureDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
-            // set the signature xObject as graphic
-            $visibleAppearance->setGraphic($signatureXObject);
-
-            // define the appearance
-            $signer->setAppearance($visibleAppearance);
-
-            // sign the document
-            $signer->sign($module);
-
-            $suratUpdate = App\Models\SuratKeluar::where('no_regist','=',$id)->update(['nama_file' => 'surat_'.$id.'.pdf' , 'status' => 5]);
-        })->name('draft.sign');
     });
 });

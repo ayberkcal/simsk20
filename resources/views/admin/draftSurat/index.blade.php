@@ -41,7 +41,7 @@
                             <td>{{$surat->layanan->nama_layanan}}</td>
                             <td>
                                 <span class="{{ $surat->statuss->class }}">
-                                <b>{{$status_surat[$surat->status]}}
+                                {{$status_surat[$surat->status]}}
                                 </span>
                             </td>
                             <td>
