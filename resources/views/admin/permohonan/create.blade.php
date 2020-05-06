@@ -10,15 +10,6 @@
     </div>
     <div id="alert_size"></div>
     <div class="card-body">
-        @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul>
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-        </div>
-        @endif
         <form method="post" action="{{ route('permohonan.store') }}" enctype="multipart/form-data">
         @csrf
             <div class="form-group row">
@@ -67,10 +58,8 @@
                 </div>
             </div>   
             <div class="card-footer">
-                <button class="btn btn-sm btn-primary" type="submit">
+                <button class="btn btn-primary float-right" type="submit">
                     <i class="icon-cursor"></i> Submit</button>
-            <button class="btn btn-sm btn-danger" type="Reset">
-                    <i class="cil-ban"></i> Reset</button>
             </div>
         </form>
 </div>  

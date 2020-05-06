@@ -98,33 +98,31 @@
                         <td>: <span class="{{ $surat->statuss->class }}">
                               {{ $status_surat[$surat->status] }}</span>
                         </td>
-                    </tr>   
-                    <tr>
-                        <td><strong>Keterangan</strong></td>
-                        <td>: {{ $surat->keterangan }}</td>
-                    </tr>                    
+                    </tr>                      
                   </tbody>
                 </table>
               </div>  
               <div class="card-footer">
                 <div class="form-group row" style="padding-left: 15px">
                   <!-- route belum di set -->
-                  <form action="#" method="POST" enctype="multipart/form-data">
-                    <button class="btn btn-success" type="submit"><i class="cil-task"></i> Verifikasi</button>
+                  <form action="{{ route('draft.verifikasiDraft',$surat->no_regist) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <button class="btn-sm btn-success" type="submit"><i class="cil-task"></i> Verifikasi</button>
                   </form>
-                  <button style="margin-left: 5px" class="btn btn-warning collapsed" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="cil-ban"></i> Tolak Draft</button>
+                  <button style="margin-left: 5px" class="btn-sm btn-warning collapsed" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="cil-ban"></i> Tolak Draft</button>
               </div>
                 <div class="collapse" id="collapseExample" style="">
                   <div class="card card-body">
-                    <form action="{{ route('draft.tolakDraft',$dokumen->no_regist) }}" method="POST">
+                    <form action="{{ route('draft.tolakDraft',$surat->no_regist) }}" method="POST">
                       @csrf
                       @method('PUT')
-                      <h6>Apabila di dalam draft surat terdapat kekeliruan, maka silahkan ketikkan kesalahan tersebut pada kolom di bawah ini dan klik tombol "Tolak"</h6>
+                      <h6>Apabila terdapat kekeliruan di dalam draft surat, maka silahkan ketikkan kesalahan tersebut pada kolom di bawah ini dan klik tombol "Tolak"</h6>
                       <div class="form-group row">
                           <label class="col-md-2"><b>Keterangan *</b></label>
                           <textarea type="text" class="form-control col-md-8" name="keterangan" maxlength="50" required></textarea>
                           <div class="col-md-2">
-                              <button class="btn btn-danger" type="submit">
+                              <button class="btn-sm btn-danger" type="submit">
                                   <i class="cil-ban"></i> Tolak</button>
                           </div>
                       </div> 

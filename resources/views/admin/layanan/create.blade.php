@@ -65,7 +65,7 @@
                 </div>   
                 <!-- baru bisa untuk 1 penandatangan -->
                 <div class="form-group row" style="margin-bottom: 0px">
-                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hirarki jabatan)</font></small></label>
+                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hierarki)</font></small></label>
                       <div class="form-group row col-md-8">
                         <div class="col-md-6" id="h-ttd">
                           <select class="form-control" name="id_user[]" id="id_user" required>
@@ -108,10 +108,8 @@
                     </div>
                 </div> 
                 <div class="card-footer">
-                    <button class="btn btn-sm btn-primary" type="submit">
+                    <button class="btn btn-primary float-right" type="submit">
                         <i class="icon-cursor"></i> Submit</button>
-                    <button class="btn btn-sm btn-danger" type="reset">
-                        <i class="cil-ban"></i> Reset</button>
                 </div>
         </form>
     </div>
@@ -158,7 +156,7 @@
         });
 
         $('#hapus-field').click(function(){
-            console.log("ttd");
+            console.log("f");
             let f = fId - 1;
       
             $('#lf_'+f+'').remove();  

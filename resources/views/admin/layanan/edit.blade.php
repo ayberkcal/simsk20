@@ -9,17 +9,7 @@
         </h4>
     </div>
     <div id="alert_size"></div>
-
         <div class="card-body">
-            @if ($errors->any())
-            <div class="alert alert-danger">
-              <ul>
-                  @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                  @endforeach
-              </ul>
-            </div>
-            @endif
             <form action="{{ route('layanan.update',$layanan->kode_layanan) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -66,24 +56,26 @@
                     </div>
                 </div>   
                 <!-- baru bisa untuk 1 penandatangan -->
-                <div class="form-group row"  style="margin-bottom: 0px">
-                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hirarki jabatan)</font></small></label>
-                      <div class="form-group row col-md-8" style="margin-bottom: 0px">          
+                <div class="form-group row" style="margin-bottom: 0px">
+                    <label class="col-md-2 col-form-label" for="ttd">Penanda Tangan *<br><small><font color="blue">(urutkan penandatangan berdasarkan hierarki)</font></small></label>
+                      <div class="form-group row col-md-8" style="margin-bottom: 0px">    
+                        <?php $tId=0;?>      
                         @foreach($penandatangan as $penandatangan)
-                          <div class="col-md-6">
-                            <select class="form-control" name="id_user[]" id="id_user" required>    
+                          <div class="col-md-6" id="id_user{{$tId}}">
+                            <select class="form-control" name="id_user[]"  required>    
                               @foreach($penandatangan1 as $ttd)
-                                <option value="{{$ttd->id_user}}"}} @if($ttd->id_user==$penandatangan->id_user) selected="true" @endif>{{$ttd->nama}}</option>
+                                <option value="{{$ttd->id_user}}"}} @if($ttd->id_user == $penandatangan->id_user) selected="true" @endif>{{$ttd->nama}}</option>
                               @endforeach 
                             </select>
                           </div>
-                          <div class="col-md-2 col-form-label" >
-                            <label for="status">Status *</label>
+                          <div class="col-md-2 col-form-label" id="labels{{$tId}}">
+                            <label for="status" >Status *</label>
                           </div>
-                          <div class="col-md-4">
-                              <input hidden class="form-control" name="status[]" id="status" required value="{{$penandatangan->status}}" />
-                              <input type="text" class="form-control" readonly value="{{$status_ttd[$penandatangan->status]}}">
+                          <div class="col-md-4" id="status{{$tId}}">
+                              <input hidden class="form-control" name="status[]" id="h{{$tId}}" required value="{{$penandatangan->status}}" />
+                              <input type="text" class="form-control"  readonly value="{{$status_ttd[$penandatangan->status]}}">
                           </div>
+                          <?php $tId++;?>
                         @endforeach
                       </div>
                       <div class="box-footer">
@@ -93,12 +85,10 @@
                       <div class="col-md-2"></div>
                       <div class="form-group row col-md-8">          
                           <div class="col-md-6" id="h-ttd"></div>
-                          <div class="col-md-2 col-form-label" >
-                            
+                          <div class="col-md-2 col-form-label">
                           </div>
-                          <div class="col-md-4" id="h-status" ></div>
+                          <div class="col-md-4" id="h-status"></div>
                       </div>
-                      
                 </div>    
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label" >Kolom Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
@@ -108,6 +98,25 @@
                         <a id="hapus-field" class="btn btn-danger"><i class="icon-trash"></i></a>
                       </div>
                       <div class="form-group row col-md-8">
+                        <?php $kId=0;?>
+                        @foreach($field as $field)
+                        <div class="col-md-1">
+                          <label class="col-form-label" id="lf-{{$kId}}">Field*</label>
+                        </div>
+                        <div class="col-md-5">
+                          <input type="text" class="form-control" name="nama_field[]" id="field-{{$kId}}" placeholder="ex: nama_ortu" value="{{$field->nama_field}}" required>
+                        </div>
+                        <div class="col-md-1">
+                          <label class="col-form-label" id="lt-{{$kId}}">Tipe*</label>
+                        </div>
+                        <div class="col-md-5">
+                          <select class="form-control" name="tipe_field[]" id="tipe-{{$kId}}" required>@foreach($tipe_field as $key=>$value)
+                            <option value="{{$key}}" {{$field->tipe_field == $key ? 'selected' : ''}}>{{$value}}</option> 
+                          @endforeach
+                          </select>
+                        </div>
+                        <?php $kId++;?>
+                        @endforeach
                         <div class="col-md-1" id="lf">
                         </div>
                         <div class="col-md-5" id="h-field">
@@ -120,10 +129,8 @@
                     </div>
                 </div> 
                 <div class="card-footer">
-                    <button class="btn btn-sm btn-primary" type="submit">
+                    <button class="btn btn-primary float-right" type="submit">
                         <i class="icon-cursor"></i> Submit</button>
-                    <button class="btn btn-sm btn-danger" type="reset">
-                        <i class="cil-ban"></i> Reset</button>
                 </div>
             </form>
 </div>         
@@ -134,8 +141,9 @@
   <script>
     var fId = 1;
     var pId = 1;
+    var a = 1;
+    var b = 1;
     $(document).ready(function() {
-        
         $('#syarats').select2({
             placeholder : '--Pilih Syarat--',
         });
@@ -143,11 +151,12 @@
         $('#tambah-ttd').click(function(){
             $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($penandatangan1 as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
 
-            $('#h-status').append("<select class='form-control' name='status[]' id='status_"+pId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($status_ttd as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");
+            $('#h-status').append("<select class='form-control' name='status[]' id='status_"+pId+"' required><option value='2' readonly selected> Pemaraf </option></select>");
             pId++;
         });
 
         $('#hapus-ttd').click(function(){
+          if (pId>1) {
             console.log("ttd");
             let ttd = pId - 1;
       
@@ -156,7 +165,18 @@
 
             $('#label_status_'+ttd+'').remove();  
             $('#status_'+ttd+'').remove();            
-            pId--;           
+            pId--; 
+          }  
+          else if ({{$tId}}>a) {
+            console.log("ttd");
+            let ttd = '{{$tId}}'- a;
+      
+            $('#id_user'+ttd+'').remove();
+            $('#labels'+ttd+'').remove();
+            $('#h'+ttd+'').remove();
+            $('#status'+ttd+'').remove();  
+            a++;
+          }     
         });
 
         $('#tambah-field').click(function(){
@@ -169,7 +189,8 @@
         });
 
         $('#hapus-field').click(function(){
-            console.log("ttd");
+          if (fId>1) {
+            console.log("f");
             let f = fId - 1;
       
             $('#lf_'+f+'').remove();  
@@ -177,7 +198,19 @@
 
             $('#lt_'+f+'').remove();  
             $('#tipe_'+f+'').remove();            
-            fId--;           
+            fId--; 
+          }
+          else{
+            console.log("f");
+            let f = '{{$kId}}'- b;
+      
+            $('#lf-'+f+'').remove();
+            $('#field-'+f+'').remove();
+            $('#lt-'+f+'').remove();
+            $('#tipe-'+f+'').remove();  
+            b++;
+          }     
+
         });     
     });
 

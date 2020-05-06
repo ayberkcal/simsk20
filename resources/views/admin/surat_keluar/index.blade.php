@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-5">
                 <h4 class="right_col">
-                    Surat Keluar <small class="text-muted">Data</small>
+                    Surat Keluar <small class="text-muted"><span class="badge badge-pill badge-success"> selesai </span></small>
                 </h4>
             </div><!--col-->
         </div><!--row-->

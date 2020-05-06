@@ -28,7 +28,7 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="layanan" role="tabpanel">
-            <div class="card uper" >
+            <div class="card uper col">
               <div class="card-body">
                 <table class="table table-responsive-sm ">
                   <tbody>
@@ -103,6 +103,7 @@
                         @endforeach
                       </tbody>
                     </table>
+                    <small>(diurutkan berdasarkan hierarki)</small>
                   </div>
                 </div>
           </div>

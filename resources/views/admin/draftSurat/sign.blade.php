@@ -84,12 +84,12 @@
               <div class="card-footer">
                 <div class="form-group row" style="padding-left: 15px">
                   <!-- route belum di set -->
-                  <button class="sign-modal btn btn-success" type="button" data-toggle="modal" data-target="#sign"><i class="cil-color-border"></i> Sign</button>
+                  <button class="sign-modal btn-sm btn-success" type="button" data-toggle="modal" data-target="#sign"><i class="cil-color-border"></i> Sign</button>
                   <form action="#" method="POST">
-                    <button class="btn btn-warning" type="submit" style="margin-left: 5px"><i class="cil-eyedropper"></i> Unsign</button>
+                    <button class="btn-sm btn-warning" type="submit" style="margin-left: 5px"><i class="cil-eyedropper"></i> Unsign</button>
                   </form>
                   <!--  -->
-                  <button class="btn btn-danger active" id="tolakd" title="Tolak Draft" data-toggle="modal" data-target="#tolakD" style="margin-left: 5px"><i class="cil-ban"></i> Tolak</button>
+                  <button class="btn-sm btn-danger" id="tolakd" title="Tolak Draft" data-toggle="modal" data-target="#tolakD" style="margin-left: 5px"><i class="cil-ban"></i> Tolak</button>
                 </div>
               </div>
             </div>

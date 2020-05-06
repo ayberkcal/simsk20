@@ -16,7 +16,7 @@
 
         <div class="row mt-4">
             <div class="col">
-                <div class="table-responsive">
+                <div class="table-sm table-responsive">
                     <table class="table">
                         <thead>
                         <tr bgcolor="aliceblue">

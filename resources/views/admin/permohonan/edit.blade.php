@@ -86,10 +86,8 @@
                 </div>
             </div>   
             <div class="card-footer">
-                <button class="btn btn-sm btn-primary" type="submit">
+                <button class="btn btn-primary float-right" type="submit">
                     <i class="icon-cursor"></i> Submit</button>
-                <button class="btn btn-sm btn-danger" type="reset">
-                    <i class="cil-ban"></i> Reset</button>
             </div>
         </form>
 </div>

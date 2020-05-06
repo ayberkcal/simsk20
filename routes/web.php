@@ -131,7 +131,7 @@ Route::group(['middleware' => ['get.menu']], function () {
 
         //manajemen permohonan
         Route::resource('permohonan','PermohonanController');
-        Route::put('permohonan/{permohonan}/verifikasi','DraftSuratController@verifikasi')->name('draft.verifikasi');
+        Route::put('permohonan/{permohonan}/verifikasiDok','DraftSuratController@verifikasiDok')->name('draft.verifikasiDok');
         Route::get('permohonan/{permohonan}/getDraft','DraftSuratController@getDraft')->name('draft.getDraft');
         Route::put('permohonan-proses/{draft}','DraftSuratController@prosesDraft')->name('draft.prosesDraft');
         Route::put('permohonan/{permohonan}/getDraft-t', 'PermohonanController@tolakPermohonan')->name('permohonan.tolakPermohonan');
@@ -141,6 +141,7 @@ Route::group(['middleware' => ['get.menu']], function () {
         //manajemen draft
         Route::get('draft','DraftSuratController@index')->name('draft.index');
         Route::get('draft/{draft}/showDraft','DraftSuratController@showDraft')->name('draft.showDraft');
+        Route::put('draft/{draft}/verifikasiDraft','DraftSuratController@verifikasiDraft')->name('draft.verifikasiDraft');
         Route::put('draft-tolak/{draft}','DraftSuratController@tolakDraft')->name('draft.tolakDraft');
             // Route::get('draft/{draft}/getDraft-no','DraftSuratController@generateNoSurat')->name('draft.generateNoSurat');
 

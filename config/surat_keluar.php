@@ -2,7 +2,7 @@
 
 return [
 	'status_surat' => [
-		0 => 'tidak diproses',
+		0 => 'ditolak',
 		1 => 'belum diproses',
 		2 => 'revisi draft',
 		3 => 'drafting',

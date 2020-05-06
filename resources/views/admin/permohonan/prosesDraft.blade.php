@@ -71,12 +71,12 @@
                               <?php $no = 0; ?>
                               <tbody>
                                 @foreach($dokumen as $dokumen)
-                                <form action="{{ route('draft.verifikasi',$dokumen->no_regist) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('draft.verifikasiDok',$surat->no_regist) }}" method="POST" enctype="multipart/form-data">
                                   @csrf
                                   @method('PUT')
                                   <tr>
                                     <td>{{++$no}}</td>
-                                    <td>{{$dokumen->syarat->nama_syarat}} ({{$dokumen->verifikasi}})</td>
+                                    <td>{{$dokumen->syarat->nama_syarat}}</td>
                                     <td><a href="{{url('file/dokumen/'.$dokumen->nama_file)}}">
                                         <i class="cil-description"></i> {{$dokumen->nama_file}}</a>
                                     </td>
@@ -118,7 +118,7 @@
                         <td><strong>Tanggal Surat</strong></td>
                         <td><input type="text" name="tgl_surat" class="form-control-sm col-5" value="{{date('Y-m-d')}}" readonly></td>
                     </tr>
-                    <tr bgcolor="lightgray">
+                    <tr bgcolor="ghostwhite">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
                               {{ $status_surat[$surat->status] }}</span>

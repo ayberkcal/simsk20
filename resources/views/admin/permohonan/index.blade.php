@@ -42,6 +42,7 @@
                             <td>{{$surat->user->nama}}</td>
                             <td>
                                 <span class="{{ $surat->statuss->class }}">
+                                    <!-- <span class="badge badge-pill badge-light"> X </span> -->
                                 {{$status_surat[$surat->status]}}
                                 </span><br>
                                 <small><font color='grey'>{{$surat->keterangan}}</small>
@@ -60,7 +61,7 @@
                                     @csrf   
                                     @method('DELETE')
                                     @if($surat->status<=1)
-                                    <button type="submit" class="btn btn-danger"  onclick="return confirm('Yakin membatalkan permohonan ini?')"><i class="icon-trash"> Batalkan</i></button>
+                                    <button type="submit" class="btn btn-danger"  onclick="return confirm('Yakin membatalkan permohonan ini?')"><i class="icon-trash"><font style="font-family: 'Segoe UI';"> Batalkan</font></i></button>
                                      @else
                                     <button class="btn btn-light" type="button" disabled=""><i class="icon-trash"></i> Batalkan</button>
                                     @endif

@@ -36,11 +36,11 @@ class LayananController extends Controller
     {
       DB::beginTransaction();
       try{
+        //insert ke tabel layanan
         $layanan = new Layanan();
         $layanan->kode_layanan = $request->kode_layanan;
         $layanan->kode_sub = $request->kode_sub;
         $layanan->nama_layanan = $request->nama_layanan;
-       
         if ($request->hasFile('template_file')) {
             $file = $request->file('template_file');
             $ext = $file->getClientOriginalExtension();
@@ -49,12 +49,10 @@ class LayananController extends Controller
             $file->move('file/template',$newName);
             $layanan->template_file = $newName;
         }
-        else {
-            dd('no file was found');
-        }
         $layanan->save();
 
-        if(($request->id_syarat)!=0){
+        //insert ke tabel syarat_layanan
+        if(($request->id_syarat)!=NULL){
             for ($i=0; $i < count($request->id_syarat); $i++) { 
                 SyaratLayanan::create([
                     'kode_layanan' => $request->kode_layanan,
@@ -62,9 +60,9 @@ class LayananController extends Controller
                 ]);
             }
         }
+        //insert ke tabel penandatangan
         // validasi composite key belum
-
-        if(($request->id_user)!=0){
+        if(($request->id_user)!=NULL){
             for ($i=0; $i < count($request->id_user); $i++) { 
                  PenandaTangan::create([
                     'kode_layanan' => $request->kode_layanan,
@@ -75,7 +73,8 @@ class LayananController extends Controller
             }
         }
 
-        if(($request->nama_field)!=0){
+        //insert ke tabel template_field
+        if(($request->nama_field)!=NULL){
             for ($i=0; $i < count($request->nama_field); $i++) { 
                  TemplateField::create([
                     'kode_layanan' => $request->kode_layanan,
@@ -112,26 +111,28 @@ class LayananController extends Controller
         $layanan = Layanan::find($id);
         $sub = Subklasifikasi::all();
         $syarat = Syarat::all();
-        $syarat1 = SyaratLayanan::where('kode_layanan','=',$id)->get();
+        
+        //$syarat1 = SyaratLayanan::where('kode_layanan','=',$id)->get();
         // $penandatangan=User::where('jenis_user','!=',1)->get();
         $penandatangan=PenandaTangan::where('kode_layanan',$id)->orderBy('urutan','asc')->get();
-        $jmlh=PenandaTangan::where('kode_layanan',$id)->count();
-        
-        foreach ($layanan->penandatangan as $layanansigner) {
-          
-            $urutan[] = $layanansigner->id_user;
-
-        }
- $penandatangan1=User::where('jenis_user','!=',1)->get();
+        //$jmlh=PenandaTangan::where('kode_layanan',$id)->count();
+        // foreach ($layanan->penandatangan as $layanansigner) {
+        //     $urutan[] = $layanansigner->id_user;
+        // }
+        $penandatangan1=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
+        
+        $field = TemplateField::where('kode_layanan',$id)->get();
         $tipe_field = config('surat_keluar.tipe_field');
-        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','tipe_field'));
+
+        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','field','tipe_field'));
     }
 
     public function update(Request $request, $id)
     {
       DB::beginTransaction();
       try{
+        //update tabel layanan
         $layanan = Layanan::findOrFail($id);
         $layanan->kode_layanan = $request->kode_layanan;
         $layanan->kode_sub = $request->kode_sub;
@@ -150,8 +151,47 @@ class LayananController extends Controller
         }
         $layanan->save();
 
-        
+      //update tabel syarat_layanan
+        //delete semua syarat_layanan
+        $syarat = SyaratLayanan::where('kode_layanan', $id)->delete();
+        //insert kembali ke tabel syarat_layanan
+        if(($request->id_syarat)!=NULL){
+            for ($i=0; $i < count($request->id_syarat); $i++) { 
+                SyaratLayanan::create([
+                    'kode_layanan' => $request->kode_layanan,
+                    'id_syarat' => $request->id_syarat[$i]
+                ]);
+            }
+        }
 
+      //update tabel penandatangan
+        //delete semua penandatangan
+        $dok = PenandaTangan::where('kode_layanan', $id)->delete();
+        //insert kembali ke tabel penandatangan
+        // validasi composite key belum
+        if(($request->id_user)!=NULL){
+            for ($i=0; $i < count($request->id_user); $i++) { 
+                 PenandaTangan::create([
+                    'kode_layanan' => $request->kode_layanan,
+                    'id_user' => $request->id_user[$i],
+                    'status' => $request->status[$i],
+                    'urutan' => $i+1
+                ]);
+            }
+        }
+
+      //update tabel template_field
+        $field = TemplateField::where('kode_layanan', $id)->delete();
+        //insert ke tabel template_field
+        if(($request->nama_field)!=NULL){
+            for ($i=0; $i < count($request->nama_field); $i++) { 
+                 TemplateField::create([
+                    'kode_layanan' => $request->kode_layanan,
+                    'nama_field' => $request->nama_field[$i],
+                    'tipe_field' => $request->tipe_field[$i]
+                ]);
+            }
+        }
 
       }
       catch(\Exception $e){

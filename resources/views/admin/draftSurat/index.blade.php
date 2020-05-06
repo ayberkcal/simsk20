@@ -24,7 +24,7 @@
                             <th>Pemohon</th>
                             <th>Layanan</th>
                             <th width="100px">Status</th>
-                            <th width="200px">Aksi(signer)</th>
+                            <th>Aksi(signer)</th>
                         </tr>
                         </thead>
                         <?php
@@ -45,8 +45,11 @@
                                 </span>
                             </td>
                             <td>
+                                @if($surat->status==3)
                                 <a class="btn btn-primary" href="{{route('draft.showDraft',$surat->no_regist)}}"><i class="icon-eye"></i></a>
+                                @elseif($surat->status==4)
                                 <a class="btn btn-success" href="{{route('draft.getFile',$surat->no_regist)}}"><i class="cil-color-border"></i> Sign</a>
+                                @endif
                             </td>
                           </tr>
                         @endforeach

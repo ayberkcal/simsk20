@@ -63,7 +63,7 @@ class PermohonanController extends Controller
         $test['tgl_permohonan'] = $request->tgl_permohonan;
         $test['tujuan'] = $request->tujuan;
         $test['status'] = 1;
-        $data = $request->only('nama_ortu','nik'); //ganti field sesuai permintaan
+        $data = $request->only('nama_ortu','nik',); //ganti field sesuai permintaan(seharusnya semua data)
         $test['data'] = json_encode($data);
         $test['created_at'] = date(now());
         $test['updated_at'] = date(now());

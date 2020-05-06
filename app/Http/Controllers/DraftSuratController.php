@@ -30,30 +30,37 @@ class DraftSuratController extends Controller
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
 
-        $format = SubKlasifikasi::where('kode_sub',"KM.00.00")->first();
+    //generate no surat
+        $kode=SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
+                         ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
+                         ->where('surat_keluar.no_regist','=',$id)->first();
+
+        $format = SubKlasifikasi::where('kode_sub',$kode['kode_sub'])->first();
         $a = $format['penomoran'];
 
         //mengambil no urut (no urut ini dimulai dari 1 setiap klasifikasi per tahunnya)
         $nos = SuratKeluar::join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
                           ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
                           ->join('klasifikasi','sub_klasifikasi.kode_klasifikasi','=','klasifikasi.kode_klasifikasi')
-                          ->where('klasifikasi.kode_klasifikasi',"KM")//ganti $kode_klasifikasi
+                          ->where('klasifikasi.kode_klasifikasi',$kode['kode_klasifikasi'])
                           ->where('surat_keluar.status','>',1)
                           ->whereYear('surat_keluar.tgl_permohonan','=',date('Y'))
                           ->count();
-
         $no = str_replace("[no_urut]", $nos+1, $a);
-
+        //no surat:
         $thn = str_replace("[tahun]", date('Y'), $no);
+    //akhir generate no surat
 
+        //hitung jumlah dokumen yang belum diverifikasi
         $verify = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
                              ->where('dokumen.no_regist',$id)
                              ->where('dokumen.verifikasi',1)
                              ->count();
 
+        //hitung jumlah dokumen persyaratan
         $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
-                             ->where('dokumen.no_regist',$id)
-                             ->count();
+                            ->where('dokumen.no_regist',$id)
+                            ->count();
 
         return view('admin.permohonan.prosesDraft',compact('surat','status_surat','dokumen','thn','verify','count'));
     }
@@ -65,13 +72,13 @@ class DraftSuratController extends Controller
       try{
         $surat = SuratKeluar::find($id);
         $penandatangan = SuratKeluar::select('user.*','dosen_tendik.*')
-                                      ->join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
-                                      ->join('penandatangan','layanan.kode_layanan','=','penandatangan.kode_layanan')
-                                      ->join('user','penandatangan.id_user','=','user.id_user')
-                                      ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
-                                      ->where('surat_keluar.no_regist','=',$id)
-                                      ->where('penandatangan.status','=','1')
-                                      ->get();
+                                    ->join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
+                                    ->join('penandatangan','layanan.kode_layanan','=','penandatangan.kode_layanan')
+                                    ->join('user','penandatangan.id_user','=','user.id_user')
+                                    ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
+                                    ->where('surat_keluar.no_regist','=',$id)
+                                    ->where('penandatangan.status','=','1')
+                                    ->get();
         $user =SuratKeluar::select('user.*','dosen_tendik.*')
                                       ->join('user','surat_keluar.id_user','=','user.id_user')
                                       ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
@@ -181,8 +188,17 @@ class DraftSuratController extends Controller
         // $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
         // $xmlWriter->save('../public/file/draft/'.$id.'.pdf');         
 
-
-        $suratUpdate = SuratKeluar::where('no_regist','=',$id)->update(['no_surat' => $request->no_surat, 'tgl_surat' => $request->tgl_surat, 'nama_file' => $id.'.pdf' , 'keterangan' => NULL, 'status' => 3]);
+        $jmlhSigner=SuratKeluar::join("layanan","surat_keluar.kode_layanan","layanan.kode_layanan")
+                               ->join("penandatangan","layanan.kode_layanan","penandatangan.kode_layanan")
+                               ->where("surat_keluar.no_regist",$id)
+                               ->count();
+        if ($jmlhSigner==1) {
+            $status=4;
+        }
+        else{
+            $status=3;
+        }
+        $suratUpdate = SuratKeluar::where('no_regist','=',$id)->update(['no_surat' => $request->no_surat, 'tgl_surat' => $request->tgl_surat, 'nama_file' => $id.'.pdf' , 'keterangan' => NULL, 'verifikasi' => $jmlhSigner , 'status' => $status]);
       }
       catch(\Exception $e){
         DB::rollBack();
@@ -190,7 +206,7 @@ class DraftSuratController extends Controller
         return redirect('/permohonan')->with('error','Permohonan Gagal Diproses!!');  
       }
       DB::commit();
-      return redirect('/draft')->with('info','Draft surat '.$id.' sedang diproses!');
+      return redirect('/permohonan')->with('info','Draft surat '.$id.' sedang diproses!');
     }
 
     //detail draft
@@ -200,6 +216,26 @@ class DraftSuratController extends Controller
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
         return view('admin.draftSurat.show',compact('surat','status_surat','dokumen'));
+    }
+
+    public function verifikasiDraft($id)
+    {   
+      DB::beginTransaction();
+      try{        
+        $surat = SuratKeluar::findOrFail($id);
+        $surat->verifikasi = $surat->verifikasi-1;
+        if ($surat->verifikasi==1) {
+            $surat->status=4;
+        }
+        $surat->save();
+      }
+      catch(\Exception $e){
+        DB::rollBack();
+        dd($e);
+        return redirect('/draft')->with('error','Gagal Diverifikasi!!');  
+      }
+      DB::commit();
+      return redirect('/draft')->with('sukses','Draft '.$id.' telah diverifikasi');
     }
 
     //tolak draft
@@ -221,7 +257,7 @@ class DraftSuratController extends Controller
     }
 
     //verifikasi dokumen persyaratan
-    public function verifikasi(Request $request,$id)
+    public function verifikasiDok(Request $request,$id)
     {
         $dok = Dokumen::where('no_regist','=',$id)->where('kode_layanan','=',$request->kode_layanan)->where('id_syarat','=',$request->id_syarat)->update([ 'verifikasi' => $request->verifikasi]);
 
