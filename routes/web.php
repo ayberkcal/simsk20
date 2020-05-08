@@ -12,7 +12,7 @@
 */
    use Illuminate\Http\Request;
 Route::group(['middleware' => ['get.menu']], function () {
-    Route::get('/', function () {           return view('dashboard.homepage'); });
+    Route::get('/', function () {           return view('dashboard.authBase'); });
 
     Route::group(['middleware' => ['role:user']], function () {
         Route::get('/colors', function () {     return view('dashboard.colors'); });
@@ -118,6 +118,8 @@ Route::group(['middleware' => ['get.menu']], function () {
             Route::get('/file/copy',        'MediaController@fileCopy')->name('media.file.copy');
         });
 
+        //dashboard
+        Route::get('/dashboard','DashboardController@index')->name('dashboard');
         //manajemen klasifikasi dan sub klasifikasi
         Route::resource('klasifikasi','KlasifikasiController')->except('show');
         Route::get('klasifikasi-sub/{klasifikasi}','KlasifikasiController@getListSub')->name('klasifikasi.sub');

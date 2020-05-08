@@ -25,13 +25,13 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Layanan *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_layanan" placeholder="ex: L001" maxlength="4" required autofocus/>
+                        <input type="text" class="form-control" name="kode_layanan" value="{{$kode}}" required readonly/>
                     </div>
                 </div>    
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Sub Klasifikasi *</label>
                     <div class="col-md-10">
-                        <select class="form-control" name="kode_sub" required>
+                        <select class="form-control" name="kode_sub" required autofocus>
                           <option value="" disabled selected>--Pilih--</option>
                         @foreach($sub as $sub)
                           <option value="{{$sub->kode_sub}}">{{$sub->sub_klasifikasi}}</option>

@@ -16,7 +16,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">Kode Layanan *</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="kode_layanan" placeholder="ex: L001" maxlength="4" value="{{ $layanan->kode_layanan }}" required/>
+                        <input type="text" class="form-control" name="kode_layanan" value="{{ $layanan->kode_layanan }}" required readonly/>
                     </div>
                 </div>    
                 <div class="form-group row">

@@ -49,8 +49,9 @@ class PermohonanController extends Controller
         $tipe_file = config('surat_keluar.tipe_file');
         $field = TemplateField::where('kode_layanan','=','L001')->get(); //ganti $id
         $tipe_field = config('surat_keluar.tipe_field');
+        $kode = "S".sprintf("%04s", SuratKeluar::count()+1);
         
-        return view('admin.permohonan.create',compact('layanan','pemohon','dokumen','tipe_file','field','tipe_field'));
+        return view('admin.permohonan.create',compact('layanan','pemohon','dokumen','tipe_file','field','tipe_field','kode'));
     }
 
     public function store(Request $request) //add draft
@@ -63,7 +64,7 @@ class PermohonanController extends Controller
         $test['tgl_permohonan'] = $request->tgl_permohonan;
         $test['tujuan'] = $request->tujuan;
         $test['status'] = 1;
-        $data = $request->only('nama_ortu','nik',); //ganti field sesuai permintaan(seharusnya semua data)
+        $data = $request->only('nama_ortu','nik'); //ganti field sesuai permintaan(seharusnya semua data)
         $test['data'] = json_encode($data);
         $test['created_at'] = date(now());
         $test['updated_at'] = date(now());

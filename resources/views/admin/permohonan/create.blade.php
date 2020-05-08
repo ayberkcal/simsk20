@@ -15,13 +15,13 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">No Regist *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="no_regist" maxlength="5" required autofocus/><!-- nantik dihidden -->
+                    <input type="text" class="form-control" name="no_regist" value="{{$kode}}" required readonly/>
                 </div>
             </div>    
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Layanan *</label>
                 <div class="col-md-10">
-                    <select class="form-control" name="kode_layanan" onchange="syarat()" id="layanan" required>
+                    <select class="form-control" name="kode_layanan" onchange="syarat()" id="layanan" required autofocus>
                       <option value="" disabled selected>--Pilih--</option>
                     @foreach($layanan as $layanan)
                       <option value="{{$layanan->kode_layanan}}">{{$layanan->nama_layanan}}</option>

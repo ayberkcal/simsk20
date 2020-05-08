@@ -29,7 +29,8 @@ class LayananController extends Controller
         $penandatangan1=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
         $tipe_field = config('surat_keluar.tipe_field');
-        return view('admin.layanan.create',compact('sub','syarat','penandatangan','penandatangan1','status_ttd','tipe_field'));
+        $kode = "L".sprintf("%03s", Layanan::count()+1);
+        return view('admin.layanan.create',compact('sub','syarat','penandatangan','penandatangan1','status_ttd','tipe_field','kode'));
     }
 
     public function store(Request $request)
