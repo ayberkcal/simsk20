@@ -4,15 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Data;
 use App\Models\Dokumen;
 use App\Models\SuratKeluar;
-use App\Models\SubKlasifikasi;
-use App\Models\TemplateField;
-use App\Models\Penandatangan;
-use TemplateProcessor;
-use IOFactory;
-use Dompdf\Dompdf;
-require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');
+use File;
 
 class DraftSuratController extends Controller
 {
@@ -23,199 +18,15 @@ class DraftSuratController extends Controller
         return view('admin.draftSurat.index',compact('surat','status_surat'));
     }
 
-    //go to halaman proses draft
-    public function getDraft($id)
-    {
-        $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
-        $dokumen = Dokumen::where('no_regist','=',$id)->get();
-
-    //generate no surat
-        $kode=SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
-                         ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
-                         ->where('surat_keluar.no_regist','=',$id)->first();
-
-        $format = SubKlasifikasi::where('kode_sub',$kode['kode_sub'])->first();
-        $a = $format['penomoran'];
-
-        //mengambil no urut (no urut ini dimulai dari 1 setiap klasifikasi per tahunnya)
-        $nos = SuratKeluar::join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
-                          ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
-                          ->join('klasifikasi','sub_klasifikasi.kode_klasifikasi','=','klasifikasi.kode_klasifikasi')
-                          ->where('klasifikasi.kode_klasifikasi',$kode['kode_klasifikasi'])
-                          ->where('surat_keluar.status','>',1)
-                          ->whereYear('surat_keluar.tgl_permohonan','=',date('Y'))
-                          ->count();
-        $no = str_replace("[no_urut]", $nos+1, $a);
-        //no surat:
-        $thn = str_replace("[tahun]", date('Y'), $no);
-    //akhir generate no surat
-
-        //hitung jumlah dokumen yang belum diverifikasi
-        $verify = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
-                             ->where('dokumen.no_regist',$id)
-                             ->where('dokumen.verifikasi',1)
-                             ->count();
-
-        //hitung jumlah dokumen persyaratan
-        $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
-                            ->where('dokumen.no_regist',$id)
-                            ->count();
-
-        return view('admin.permohonan.prosesDraft',compact('surat','status_surat','dokumen','thn','verify','count'));
-    }
-
-    //proses draft
-    public function prosesDraft(Request $request, $id)
-    {
-      DB::beginTransaction();
-      try{
-        $surat = SuratKeluar::find($id);
-        $penandatangan = SuratKeluar::select('user.*','dosen_tendik.*')
-                                    ->join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
-                                    ->join('penandatangan','layanan.kode_layanan','=','penandatangan.kode_layanan')
-                                    ->join('user','penandatangan.id_user','=','user.id_user')
-                                    ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
-                                    ->where('surat_keluar.no_regist','=',$id)
-                                    ->where('penandatangan.status','=','1')
-                                    ->get();
-        $user =SuratKeluar::select('user.*','dosen_tendik.*')
-                                      ->join('user','surat_keluar.id_user','=','user.id_user')
-                                      ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
-                                      ->where('surat_keluar.no_regist','=',$id)
-                                      ->get();
-
-//kodingan generate surat disini
-        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('../public/file/template/template.docx');
-        
-        foreach ($penandatangan as $k) {    
-            $templateProcessor->setValues([
-                'penandatangan_nama'=>$k->nama, 
-                'penandatangan_id_user'=>$k->id_user,
-                'penandatangan_pangkat'=>$k->pangkat,
-                'penandatangan_golongan'=>$k->golongan,
-                'penandatangan_jabatan'=>$k->jabatan,
-                'fakultas'=>'Teknologi Infomasi',
-            ]);
-        }
-        //data pemohon yang diambil dari tabel user
-        $fieldUser = $surat->user->only('id_user','nama'); //ganti field sesuai permintaan
-        $dataUserE = json_encode($fieldUser);
-        $dataUserD = json_decode($dataUserE);
-        foreach($dataUserD as $key=>$value){
-            $templateProcessor->setValues([
-                $key=>$value, 
-            ]);
-        }
-        //data penandatangan  
-        foreach ($user as $u) {
-            $templateProcessor->setValues([
-                'pangkat'=>$u->pangkat,
-                'golongan'=>$u->golongan,
-                'jabatan'=>$u->jabatan,
-                'sub_bagian'=>$u->sub_bagian,
-            ]);
-        }
-
-        //data dari tabel surat
-        $templateProcessor->setValues([
-            'no_surat' => $request->no_surat,
-            'tgl_surat' => date('d F Y'),
-            'tujuan' => $surat->tujuan,
-        ]);
-        //data dari field tambahan di kolom data di tabel surat
-        $datas = json_decode($surat->data);
-        foreach($datas as $key=>$value){
-            $templateProcessor->setValues([
-                $key=>$value, 
-            ]);
-        }
-
-        $bln=date('m');
-        if ($bln<="06") {
-            $thn_akademik=(date('Y')-1).'/'.date('Y');
-            $semester="GENAP";}
-        elseif ($bln<="12") {
-            $thn_akademik=date('Y').'/'.(date('Y')+1);
-            $semester="GANJIL";}
-
-        $nim=$surat->id_user;
-        $jurusan=substr($nim, 3, 3);
-        if($jurusan=="151"){
-            $jurusan="Sistem Komputer";}
-        elseif ($jurusan=="152") {
-            $jurusan="Sistem Informasi";}
-        else{$jurusan="-";}
-
-        $templateProcessor->setValues([
-            'thn_akademik' => $thn_akademik,
-            'jurusan' => $jurusan,
-            'semester' => $semester,
-        ]);
-
-        //header("Content-Disposition: attachment; filename=template.docx");
-
-//generate to pdf
-        $templateProcessor->saveAs('../public/file/draft/'.$id.'.docx');
-        // $temp = $templateProcessor->saveAs('../public/file/draft/'.$id.'.docx');
-        // $pdf = $templateProcessor->saveAs('../public/file/draft/'.$id.'.pdf');
-        // $phpWord = \PhpOffice\PhpWord\IOFactory::load($temp);
-        // $phpWord->saveAs($pdf, 'PDF');
-        // $unlink($temp);
-
-  
-          // \PhpOffice\PhpWord\Settings::setPdfRendererPath(base_path() .'/vendor/dompdf/dompdf');
-
-          //  \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-
-          //   $phpWord = \PhpOffice\PhpWord\IOFactory::load('../public/file/draft/'.$id.'.docx', 'Word2007');
-
-          //   $pdfWriter = \PhpOffice\PhpWord\IOFactory::createWriter( $phpWord, 'PDF' );
-
-          //   $pdfWriter->save('../public/file/draft/'.$id.'.pdf');
-            /////////////
-
-        // $phpWord = new \PhpOffice\PhpWord\PhpWord();
-
-        // //Open template and save it as docx
-        // $document = $phpWord->loadTemplate('../public/file/draft/'.$id.'.docx');
-        // $document->saveAs('temp.docx');
-
-        // //Load temp file
-        // $phpWord = \PhpOffice\PhpWord\IOFactory::load('../public/file/draft/'.$id.'.docx','Word2007'); 
-
-        // //Save it
-        // $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
-        // $xmlWriter->save('../public/file/draft/'.$id.'.pdf');         
-
-        $jmlhSigner=SuratKeluar::join("layanan","surat_keluar.kode_layanan","layanan.kode_layanan")
-                               ->join("penandatangan","layanan.kode_layanan","penandatangan.kode_layanan")
-                               ->where("surat_keluar.no_regist",$id)
-                               ->count();
-        if ($jmlhSigner==1) {
-            $status=4;
-        }
-        else{
-            $status=3;
-        }
-        $suratUpdate = SuratKeluar::where('no_regist','=',$id)->update(['no_surat' => $request->no_surat, 'tgl_surat' => $request->tgl_surat, 'nama_file' => $id.'.pdf' , 'keterangan' => NULL, 'verifikasi' => $jmlhSigner , 'status' => $status]);
-      }
-      catch(\Exception $e){
-        DB::rollBack();
-        dd($e);
-        return redirect('/permohonan')->with('error','Permohonan Gagal Diproses!!');  
-      }
-      DB::commit();
-      return redirect('/permohonan')->with('info','Draft surat '.$id.' sedang diproses!');
-    }
-
     //detail draft
     public function showDraft($id)
     {
         $surat = SuratKeluar::find($id);
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        return view('admin.draftSurat.show',compact('surat','status_surat','dokumen'));
+        $field = Data::join('template_field','data.id_field','template_field.id_field')
+                     ->where('data.no_regist',$id)->get();
+        return view('admin.draftSurat.show',compact('surat','status_surat','dokumen','field'));
     }
 
     public function verifikasiDraft($id)
@@ -231,7 +42,6 @@ class DraftSuratController extends Controller
       }
       catch(\Exception $e){
         DB::rollBack();
-        dd($e);
         return redirect('/draft')->with('error','Gagal Diverifikasi!!');  
       }
       DB::commit();
@@ -244,6 +54,8 @@ class DraftSuratController extends Controller
       DB::beginTransaction();
       try{
         $surat = SuratKeluar::findOrFail($id);
+        File::delete('file/draft/'.$surat->nama_file);
+        $surat->nama_file=NULL;
         $surat->keterangan = $request->keterangan;
         $surat->status = 2;
         $surat->save($request->all());
@@ -256,31 +68,26 @@ class DraftSuratController extends Controller
       return redirect('/draft')->with('info','Draft '.$id.' ditolak karena '.$request->keterangan);
     }
 
-    //verifikasi dokumen persyaratan
-    public function verifikasiDok(Request $request,$id)
-    {
-        $dok = Dokumen::where('no_regist','=',$id)->where('kode_layanan','=',$request->kode_layanan)->where('id_syarat','=',$request->id_syarat)->update([ 'verifikasi' => $request->verifikasi]);
-
-        return redirect('permohonan/'.$id.'/getDraft');
-    }
-
 //penandatanganan
     public function getFile($id)
     {
         $surat = SuratKeluar::find($id);
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        return view('admin.draftSurat.sign',compact('surat','status_surat','dokumen','thn'));
+        $field = Data::join('template_field','data.id_field','template_field.id_field')
+                     ->where('data.no_regist',$id)->get();
+        return view('admin.draftSurat.sign',compact('surat','status_surat','dokumen','thn','field'));
     }
 
     public function sign(Request $request, $id)
     {  
         DB::beginTransaction();
         try{   
+            require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');
             $surat = SuratKeluar::find($id);
 
             // create a Http writer (file name)
-            $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true);
+            $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true); //SAVE KE LOCAL
             // load document by filename
             $document = \SetaPDF_Core_Document::loadByFilename('../public/file/draft/'.$surat->nama_file, $writer);
 
@@ -298,15 +105,15 @@ class DraftSuratController extends Controller
             );
 
             // set some signature properties
-            $signer->setReason("Just for testing");
-            $signer->setLocation('setasign.com');
-            //$signer->setContactInfo('+49 5351 3803603');
+            $signer->setReason("SIMSK |");
+            $signer->setLocation('Fakultas Teknologi Informasi');
+            $signer->setContactInfo('(0751) 9824667');
 
 
             // read certificate and private key from the PFX file
             $pkcs12 = array();
             $pfxRead = openssl_pkcs12_read(
-                file_get_contents('../public/file/aura24011998@gmail.com.p12'),
+                file_get_contents($request->sertifikat), //klu diluar xampp gk kebaca //UBAH ALAMAT
                 $pkcs12,
                 $request->password
             );
@@ -344,7 +151,7 @@ class DraftSuratController extends Controller
             $visibleAppearance->setBackgroundLogo($backgroundXObject, .5);
 
             // choose a document with a handwritten signature
-            $signatureDocument = \SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf');
+            $signatureDocument = \SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf'); //UBAH ALAMAT
             $signatureXObject = $signatureDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
             // set the signature xObject as graphic
             $visibleAppearance->setGraphic($signatureXObject);

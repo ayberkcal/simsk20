@@ -21,7 +21,7 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Layanan *</label>
                 <div class="col-md-10">
-                    <select class="form-control" name="kode_layanan" onchange="syarat()" id="layanan" required autofocus>
+                    <select class="form-control" name="kode_layanan" onchange="goToTestPage(this.value)" required autofocus>
                       <option value="" disabled selected>--Pilih--</option>
                     @foreach($layanan as $layanan)
                       <option value="{{$layanan->kode_layanan}}">{{$layanan->nama_layanan}}</option>
@@ -66,41 +66,9 @@
 @endsection
 
 @section('javascript')
-  <script>
-    function syarat() {
-      /*var x = document.getElementById("layanan").value;*/
-      /*document.getElementById("d-syarat").innerHTML = "YOU CHOOSE:" + x;*/
-       $('#d-syarat').empty(); 
-       $('#d-syarat').append("<table name='t-syarat' class='table table-responsive-sm table-bordered table-striped table-sm'><thead><tr><th>#</th><th>Syarat</th><th>Dokumen</th></tr></thead> <?php $no = 0; ?> <tbody>@foreach($dokumen as $dokumen)<tr><td>{{++$no}}</td> <td>{{$dokumen->syarat->nama_syarat}}<small><font color='blue'> ({{$tipe_file[$dokumen->syarat->tipe_file]}})</font></small></td><input hidden name='id_syarat[]' value='{{$dokumen->id_syarat}}'><td><input type='file' class='form-control-file' id='nama_file' name='nama_file[]' accept='{{$tipe_file[$dokumen->syarat->tipe_file]}}' onchange='ValidateInput(this)' required/></td></tr> @endforeach</tbody></table>");    
-
-// ganti empty jadi remove
-       $('#field').empty();
-       $('#field').append("@foreach($field as $field)<label class='col-md-2 col-form-label'><?php $a=$field->nama_field; $b=str_replace("_", " ", $a); $c=str_word_count($b); if ($c==1) {$d=strtoupper($b);} else {$d=ucwords($b);} echo $d;?> *</label><div class='col-md-10'><input type='{{$tipe_field[$field->tipe_field]}}' class='form-control' name='{{$field->nama_field}}'></div><br><br>@endforeach")
+<script>
+    function goToTestPage(id){
+        window.location.href = "createAjax/"+id;
     }
-
-    function ValidateInput(file) {
-        var FileSize = file.files[0].size / 1024 / 1024; // in MB
-        var pathFile = file.value;
-        var ekstensiOk = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf)$/i;
-        // if ({{$dokumen->syarat->tipe_file}}==1) {var ekstensiOk = /(\.pdf)$/i;}
-        // else if({{$dokumen->syarat->tipe_file}}==2) {var ekstensiOk = /(\.jpg|\.jpeg|\.png|\.gif)$/i;}
-        // else {alert('no');}
-
-        if (FileSize > 2) {
-            $(file).val(''); //for clearing with Jquery
-            $('#vsize').remove();
-            $('#alert_size').append("<div class='alert alert-warning alert-dismissible fade show' role='alert' id='vsize'><span class='badge badge-pill badge-warning'>Warning</span> Ukuran file maks 2 MB!! <button class='close' type='button' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button></div>");
-        }
-        else if(!ekstensiOk.exec(pathFile)){
-            //alert('Silakan upload file yang memiliki ekstensi .docx');
-            $(file).val('');
-            $('#veks').remove();
-            $('#alert_size').append("<div class='alert alert-warning alert-dismissible fade show' role='alert' id='veks'><span class='badge badge-pill badge-warning'>Warning</span> Silakan upload file yang memiliki ekstensi {{$tipe_file[$dokumen->syarat->tipe_file]}}!! <button class='close' type='button' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button></div>");
-        }
-        else{
-            $('#vsize').remove();
-            $('#veks').remove();
-        }
-    }
-  </script>
+</script>
 @endsection

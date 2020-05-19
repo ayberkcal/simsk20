@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\SuratKeluar;
+use App\Models\Data;
 use App\Models\Dokumen;
+use App\Models\SuratKeluar;
 
 class SuratKeluarController extends Controller
 {
@@ -48,8 +49,10 @@ class SuratKeluarController extends Controller
         $surat = SuratKeluar::find($id);
         $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
+        $field = Data::join('template_field','data.id_field','template_field.id_field')
+                     ->where('data.no_regist',$id)->get();
        
-        return view('admin.surat_keluar.showSurat',compact('surat','status_surat','dokumen'));
+        return view('admin.surat_keluar.showSurat',compact('surat','status_surat','dokumen','field'));
     }
 
     /**

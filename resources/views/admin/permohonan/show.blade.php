@@ -38,20 +38,18 @@
                         <td><strong>Tujuan</strong></td>
                         <td>: {{ $surat->tujuan }}</td>
                     </tr>
-                    <!-- convert json to object php -->
-                    <?php $datas=json_decode($surat->data);?> 
-                    @foreach($datas as $key=>$value)
+                    @foreach($field as $field)
                     <tr>
                         <td><strong>
                             <?php 
-                            $a=$key; 
+                            $a=$field->nama_field; 
                             $b=str_replace("_", " ", $a);
-                            $c=str_word_count($b);
-                            if ($c==1) {$d=strtoupper($b);} 
+                            $c=strlen($b);
+                            if ($c<=4) {$d=strtoupper($b);} 
                             else {$d=ucwords($b);} 
                             echo $d;?>
                             </strong></td>
-                        <td>: {{ $value }}</strong></td>
+                        <td>: {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
                     <tr bgcolor="honeydew">

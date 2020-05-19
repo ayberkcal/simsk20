@@ -30,33 +30,27 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Layanan *</label>
                 <div class="col-md-10">
-                    <select class="form-control" name="kode_layanan" onchange="syarat()" id="layanan" required>
-                      <option value="" disabled selected>--Pilih--</option>
-                    @foreach($layanan as $layanan)
-                      <option value="{{$layanan->kode_layanan}}" {{$layanan->kode_layanan == $surat->kode_layanan ? 'selected' : ''}}>{{$layanan->nama_layanan}}</option>
-                    @endforeach
-                    </select>
+                    <input type="text" class="form-control" name="kode_layanan" value="{{$surat->layanan->nama_layanan}}" readonly>
                 </div>
             </div>
-            <div class="form-group row">
-                <label class="col-md-2 col-form-label">Pemohon *</label>
-                <div class="col-md-10">
-                    <select class="form-control" name="id_user" required>
-                            <option value="" disabled selected>--Pilih--</option>
-                        @foreach($pemohon as $pemohon)
-                            <option value="{{$pemohon->id_user}}" {{$pemohon->id_user == $surat->id_user ? 'selected' : ''}}>{{$pemohon->nama}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <input type="hidden" name="tgl_permohonan" value="{{now()}}"/>
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Tujuan *</label>
                 <div class="col-md-10">
                     <input type="text" class="form-control" name="tujuan" required autocomplete="off" value="{{$surat->tujuan}}" />
                 </div>
             </div>   
-            <input type="hidden" class="form-control" name="status" value="1" />
+            <div class="form-group row" id="field">
+                @foreach($fields as $fields)
+
+                <label class='col-md-2 col-form-label'><?php $a=$fields->nama_field; $b=str_replace("_", " ", $a); $c=strlen($b); if ($c<=4) {$d=strtoupper($b);} else {$d=ucwords($b);} echo $d;?> *</label>
+                    <div class='col-md-10'>
+                        <!-- masih error -->
+                        <input type="{{$tipe_field[$fields->tipe_field]}}" class="form-control" name="{{$fields->nama_field}}" value="{{$fields->data}}" required>
+                      
+                    </div><br><br>
+                @endforeach
+            </div> 
+            @if($jSyarat!=0)
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Dokumen Persyaratan *</label>
                 <div class="col-md-10" id="d-syarat">
@@ -84,7 +78,11 @@
                       </tbody>
                     </table>
                 </div>
-            </div>   
+            </div>
+            @endif 
+            <input hidden name="id_user" value="{{$surat->id_user}}">
+            <input hidden name="tgl_permohonan" value="{{now()}}"/>
+            <input type="hidden" class="form-control" name="status" value="1"/>  
             <div class="card-footer">
                 <button class="btn btn-primary float-right" type="submit">
                     <i class="icon-cursor"></i> Submit</button>

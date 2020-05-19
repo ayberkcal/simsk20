@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d14508dd6b369db04942c705b49f58b",
+    "content-hash": "9e67ef50b90938ac24240b8b996d1269",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -102,6 +102,54 @@
                 "math"
             ],
             "time": "2020-02-17T13:57:43+00:00"
+        },
+        {
+            "name": "convertapi/convertapi-php",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ConvertAPI/convertapi-php.git",
+                "reference": "76d523b202ec2bc0b93a939ddd446398a54d7a79"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ConvertAPI/convertapi-php/zipball/76d523b202ec2bc0b93a939ddd446398a54d7a79",
+                "reference": "76d523b202ec2bc0b93a939ddd446398a54d7a79",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "ConvertApi\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ConvertAPI and contributors",
+                    "homepage": "https://github.com/ConvertAPI/convertapi-php/graphs/contributors"
+                }
+            ],
+            "description": "Convert API PHP Client",
+            "homepage": "https://github.com/ConvertAPI/convertapi-php",
+            "keywords": [
+                "api",
+                "client",
+                "conversion",
+                "convert"
+            ],
+            "time": "2018-09-30T08:12:25+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",

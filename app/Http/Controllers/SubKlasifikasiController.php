@@ -20,7 +20,7 @@ class SubKlasifikasiController extends Controller
             'kode_sub' => 'required|unique:sub_klasifikasi'
         ]);
         SubKlasifikasi::create($request->all());
-        return redirect('/klasifikasi-sub/'.$id)->with('sukses','Berhasil Menambahkan Data.');
+        return redirect('/klasifikasi-'.$id)->with('sukses','Berhasil Menambahkan Data.');
     }
 
     public function edit($id,$sub)
@@ -28,7 +28,7 @@ class SubKlasifikasiController extends Controller
         $klas=Klasifikasi::find($id);
         $sub = SubKlasifikasi::find($sub);
         $klasifikasi = Klasifikasi::all();
-        return view('admin.klasifikasi.edit_sub',compact('klas','sub'),compact('klasifikasi'));
+        return view('admin.klasifikasi.edit_sub',compact('klas','sub','klasifikasi'));
     }
 
     public function update(Request $request, $id, $sub)
@@ -38,7 +38,7 @@ class SubKlasifikasiController extends Controller
         ]);
         $sub = SubKlasifikasi::find($sub);
         $sub->update($request->all());
-        return redirect('/klasifikasi-sub/'.$id)->with('sukses','Berhasil Memperbaharui Data!!');
+        return redirect('/klasifikasi-'.$id)->with('sukses','Berhasil Memperbaharui Data!!');
     }
 
     public function destroy($id,$sub)
@@ -46,6 +46,6 @@ class SubKlasifikasiController extends Controller
         $klas=Klasifikasi::find($id);
         $sub = SubKlasifikasi::find($sub);
         $sub->delete();
-        return redirect('/klasifikasi-sub/'.$id)->with('sukses','Berhasil Menghapus Data!!');
+        return redirect('/klasifikasi-'.$id)->with('sukses','Berhasil Menghapus Data!!');
     }
 }

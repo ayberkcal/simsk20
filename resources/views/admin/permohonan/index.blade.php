@@ -23,7 +23,7 @@
                             <th>#</th>
                             <th>No Regist</th>
                             <th>Layanan</th>
-                            <th>Pemohon</th>
+                            <th width="100px">Pemohon</th>
                             <th width="140px">Status</th>
                             <th>updated_at</th>
                             <th width="200px">Aksi(sivitas)</th>
@@ -69,10 +69,8 @@
                                 </form>
                             </td>
                             <td>
-                                @if($surat->status==0)
-                                    <!-- or disabled? -->
-                                @else
-                                <a class="btn btn-primary active" href="{{route('draft.getDraft',$surat->no_regist)}}"><i class="cil-envelope-open"> Proses</i></a>
+                                @if($surat->status>0)
+                                <a class="btn btn-primary active" href="{{route('permohonan.getDraft',$surat->no_regist)}}"><i class="cil-envelope-open"> Proses</i></a>
                                 @endif
                             </td>
                           </tr>

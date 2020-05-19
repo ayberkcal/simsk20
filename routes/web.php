@@ -73,12 +73,8 @@ Route::group(['middleware' => ['get.menu']], function () {
     ]);
 
     Route::group(['middleware' => ['role:admin']], function () {
-        Route::resource('bread',  'BreadController');   //create BREAD (resource)
         Route::resource('users',        'UsersController')->except( ['create', 'store'] );
         Route::resource('roles',        'RolesController');
-        Route::resource('mail',        'MailController');
-        Route::get('prepareSend/{id}',        'MailController@prepareSend')->name('prepareSend');
-        Route::post('mailSend/{id}',        'MailController@send')->name('mailSend');
         Route::get('/roles/move/move-up',      'RolesController@moveUp')->name('roles.up');
         Route::get('/roles/move/move-down',    'RolesController@moveDown')->name('roles.down');
         Route::prefix('menu/element')->group(function () { 
@@ -101,29 +97,14 @@ Route::group(['middleware' => ['get.menu']], function () {
             Route::post('/update',  'MenuController@update')->name('menu.menu.update');
             Route::get('/delete',   'MenuController@delete')->name('menu.menu.delete');
         });
-        Route::prefix('media')->group(function () {
-            Route::get('/',                 'MediaController@index')->name('media.folder.index');
-            Route::get('/folder/store',     'MediaController@folderAdd')->name('media.folder.add');
-            Route::post('/folder/update',   'MediaController@folderUpdate')->name('media.folder.update');
-            Route::get('/folder',           'MediaController@folder')->name('media.folder');
-            Route::post('/folder/move',     'MediaController@folderMove')->name('media.folder.move');
-            Route::post('/folder/delete',   'MediaController@folderDelete')->name('media.folder.delete');;
-
-            Route::post('/file/store',      'MediaController@fileAdd')->name('media.file.add');
-            Route::get('/file',             'MediaController@file');
-            Route::post('/file/delete',     'MediaController@fileDelete')->name('media.file.delete');
-            Route::post('/file/update',     'MediaController@fileUpdate')->name('media.file.update');
-            Route::post('/file/move',       'MediaController@fileMove')->name('media.file.move');
-            Route::post('/file/cropp',      'MediaController@cropp');
-            Route::get('/file/copy',        'MediaController@fileCopy')->name('media.file.copy');
-        });
 
         //dashboard
         Route::get('/dashboard','DashboardController@index')->name('dashboard');
+
         //manajemen klasifikasi dan sub klasifikasi
         Route::resource('klasifikasi','KlasifikasiController')->except('show');
-        Route::get('klasifikasi-sub/{klasifikasi}','KlasifikasiController@getListSub')->name('klasifikasi.sub');
-        Route::resource('klasifikasi-sub/{klasifikasi}/sub','SubKlasifikasiController')->except('index','show');
+        Route::get('klasifikasi-{klasifikasi}','KlasifikasiController@getListSub')->name('klasifikasi.sub');
+        Route::resource('klasifikasi-{klasifikasi}/sub','SubKlasifikasiController')->except('index','show');
 
         //manajemen syarat
         Route::resource('syarat','SyaratController')->except('show');
@@ -133,11 +114,12 @@ Route::group(['middleware' => ['get.menu']], function () {
 
         //manajemen permohonan
         Route::resource('permohonan','PermohonanController');
-        Route::put('permohonan/{permohonan}/verifikasiDok','DraftSuratController@verifikasiDok')->name('draft.verifikasiDok');
-        Route::get('permohonan/{permohonan}/getDraft','DraftSuratController@getDraft')->name('draft.getDraft');
-        Route::put('permohonan-proses/{draft}','DraftSuratController@prosesDraft')->name('draft.prosesDraft');
+        Route::get('permohonan/createAjax/{id}','PermohonanController@createAjax')->name('permohonan.createAjax');
+        Route::get('permohonan/{permohonan}/getDraft','PermohonanController@getDraft')->name('permohonan.getDraft');
+        Route::put('permohonan/{permohonan}/verifikasiDok','PermohonanController@verifikasiDok')->name('permohonan.verifikasiDok');
         Route::put('permohonan/{permohonan}/getDraft-t', 'PermohonanController@tolakPermohonan')->name('permohonan.tolakPermohonan');
-            //belum berfungsi dengan baik
+        Route::put('permohonan-proses/{draft}','PermohonanController@prosesDraft')->name('permohonan.prosesDraft');
+            //*belum berfungsi dengan baik*
              Route::get('permohonan/create/{id}','PermohonanController@layananAjax')->name('layananAjax');
             
         //manajemen draft
@@ -145,13 +127,14 @@ Route::group(['middleware' => ['get.menu']], function () {
         Route::get('draft/{draft}/showDraft','DraftSuratController@showDraft')->name('draft.showDraft');
         Route::put('draft/{draft}/verifikasiDraft','DraftSuratController@verifikasiDraft')->name('draft.verifikasiDraft');
         Route::put('draft-tolak/{draft}','DraftSuratController@tolakDraft')->name('draft.tolakDraft');
-            // Route::get('draft/{draft}/getDraft-no','DraftSuratController@generateNoSurat')->name('draft.generateNoSurat');
+            //*Route::get('draft/{draft}/getDraft-no','DraftSuratController@generateNoSurat')->name('draft.generateNoSurat');*
 
         //penandatanganan
         Route::get('draft/{draft}/getFile','DraftSuratController@getFile')->name('draft.getFile');
         Route::put('draft-sign/{draft}','DraftSuratController@sign')->name('draft.sign');
+            //*unsign*
 
         //manajemen surat keluar
-        Route::resource('suratkeluar','SuratKeluarController');
+        Route::resource('suratkeluar','SuratKeluarController'); //*ubah sesuai yang dibutuhkan saja(index,show,download)*
     });
 });

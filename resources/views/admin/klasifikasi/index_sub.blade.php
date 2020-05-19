@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-sm-5">
                 <h4 class="right_col">
-                    Sub-Klasifikasi <small class="text-muted"> ({{$klasifikasi->klasifikasi}}-{{$klasifikasi->kode_klasifikasi}})</small>
+                    Subklasifikasi <small class="text-muted"> {{$klasifikasi->klasifikasi}} ({{$klasifikasi->kode_klasifikasi}})</small>
                 </h4>
             </div><!--col-->
             <div class="col-sm-7">

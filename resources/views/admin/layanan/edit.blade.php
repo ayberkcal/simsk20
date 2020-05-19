@@ -91,7 +91,7 @@
                       </div>
                 </div>    
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" >Kolom Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
+                    <label class="col-md-2 col-form-label" >Data Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
                     <div class="form-group row col-md-10">
                       <div class="col-md-2">
                         <a id="tambah-field" class="btn btn-success"><i class="icon-plus"></i></a>
@@ -101,10 +101,11 @@
                         <?php $kId=0;?>
                         @foreach($field as $field)
                         <div class="col-md-1">
-                          <label class="col-form-label" id="lf-{{$kId}}">Field*</label>
+                          <label class="col-form-label" id="lf-{{$kId}}">Kolom*</label>
                         </div>
                         <div class="col-md-5">
-                          <input type="text" class="form-control" name="nama_field[]" id="field-{{$kId}}" placeholder="ex: nama_ortu" value="{{$field->nama_field}}" required>
+                          <input hidden name="id_field[]" value="{{$field->id_field}}" id="id-{{$kId}}" />
+                          <input type="text" class="form-control" name="nama_field[]" id="field-{{$kId}}"placeholder="ex: nama_ortu" value="{{$field->nama_field}}" required>
                         </div>
                         <div class="col-md-1">
                           <label class="col-form-label" id="lt-{{$kId}}">Tipe*</label>
@@ -143,6 +144,9 @@
     var pId = 1;
     var a = 1;
     var b = 1;
+    var id_f = 1;
+    var kId = '{{$kId}}';
+    var idf = '{{$idf}}';
     $(document).ready(function() {
         $('#syarats').select2({
             placeholder : '--Pilih Syarat--',
@@ -151,7 +155,7 @@
         $('#tambah-ttd').click(function(){
             $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($penandatangan1 as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
 
-            $('#h-status').append("<select class='form-control' name='status[]' id='status_"+pId+"' required><option value='2' readonly selected> Pemaraf </option></select>");
+            $('#h-status').append("<input hidden class='form-control' name='status[]' id='ids_"+pId+"' value='2'><input class='form-control' id='status_"+pId+"' value='Pemaraf' disabled required>");
             pId++;
         });
 
@@ -162,7 +166,7 @@
       
             $('#label_ttd_'+ttd+'').remove();  
             $('#id_user_'+ttd+'').remove();  
-
+            $('#ids_'+ttd+'').remove();  
             $('#label_status_'+ttd+'').remove();  
             $('#status_'+ttd+'').remove();            
             pId--; 
@@ -180,12 +184,13 @@
         });
 
         $('#tambah-field').click(function(){
-            $('#lf').append("<label class='col-form-label' id='lf_"+fId+"'>Field*</label>");
-            $('#h-field').append("<input type='text' class='form-control' name='nama_field[]' id='field_"+fId+"' placeholder='ex: nama_ortu' required>");
+            var i = parseInt(idf) + id_f;
+            $('#lf').append("<label class='col-form-label' id='lf_"+fId+"'>Kolom*</label>");
+            $('#h-field').append("<input hidden name='id_fields[]' value='"+i+"' id='id_"+fId+"'><input type='text' class='form-control' name='nama_fields[]' id='field_"+fId+"' placeholder='ex: nama_ortu' required>");
 
             $('#lt').append("<label class='col-form-label' id='lt_"+fId+"'>Tipe*</label>");
-            $('#h-tipe').append("<select class='form-control' name='tipe_field[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
-            fId++;
+            $('#h-tipe').append("<select class='form-control' name='tipe_fields[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
+            fId++; id_f++;
         });
 
         $('#hapus-field').click(function(){
@@ -193,19 +198,20 @@
             console.log("f");
             let f = fId - 1;
       
-            $('#lf_'+f+'').remove();  
+            $('#lf_'+f+'').remove(); 
+            $('#id_'+f+'').remove();   
             $('#field_'+f+'').remove();  
-
             $('#lt_'+f+'').remove();  
             $('#tipe_'+f+'').remove();            
-            fId--; 
+            fId--; id_f--;
           }
           else{
             console.log("f");
-            let f = '{{$kId}}'- b;
+            let f = parseInt(kId) - b;
       
             $('#lf-'+f+'').remove();
             $('#field-'+f+'').remove();
+            $('#id-'+f+'').remove(); 
             $('#lt-'+f+'').remove();
             $('#tipe-'+f+'').remove();  
             b++;

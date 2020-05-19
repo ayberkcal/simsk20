@@ -51,20 +51,18 @@
                         <td><strong>Pemohon</strong></td>
                         <td>: {{ $surat->user->nama }}</td>
                     </tr> 
-                    <!-- convert json to object php -->
-                    <?php $datas=json_decode($surat->data);?> 
-                    @foreach($datas as $key=>$value)
+                    @foreach($field as $field)
                     <tr>
                         <td><strong>
                             <?php 
-                            $a=$key; 
+                            $a=$field->nama_field; 
                             $b=str_replace("_", " ", $a);
-                            $c=str_word_count($b);
+                            $c=strlen($b);
                             if ($c==1) {$d=strtoupper($b);} 
                             else {$d=ucwords($b);} 
                             echo $d;?>
                             </strong></td>
-                        <td>: {{ $value }}</strong></td>
+                        <td>: {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
                     <tr><td></td><td></td></tr>
@@ -120,8 +118,16 @@
             <form action="{{ route('draft.sign',$surat->no_regist) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+            <!-- upload masih bermasalah -->
               <div class="form-group row">
-                <label class="control-label col-md-3">Password:</label>
+                <label class="control-label col-md-4">Sertifikat digital *</label> 
+                <div class="col-sm-6">
+                  <input type="file" class="form-control-file" id="sertifikat" name="sertifikat" accept=".p12"required/>
+                  <small id="size"><font color='blue'>(ekstensi file = .p12)</font></small>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="control-label col-md-4">Password *</label>
                 <div class="col-sm-6">
                   <input type="password" class="form-control" id="ket" name="password" autofocus required>
                 </div>

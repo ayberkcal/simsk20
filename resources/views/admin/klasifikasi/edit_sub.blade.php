@@ -24,7 +24,7 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Kode Sub Klasifikasi *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="kode_sub" id="input_mask" value="{{ $sub->kode_sub }}" maxlength="8" required/>
+                    <input type="text" class="form-control" name="kode_sub" id="input_mask" value="{{ $sub->kode_sub }}" required/>
                     <small>ex: KM.00.00</small>
                 </div>
             </div>    

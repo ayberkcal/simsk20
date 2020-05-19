@@ -36,20 +36,18 @@
                         <td><strong>Tujuan</strong></td>
                         <td>: {{ $surat->tujuan }}</td>
                     </tr>
-                    <!-- convert json to object php -->
-                    <?php $datas=json_decode($surat->data);?> 
-                    @foreach($datas as $key=>$value)
+                    @foreach($field as $field)
                     <tr>
                         <td><strong>
                             <?php 
-                            $a=$key; 
+                            $a=$field->nama_field; 
                             $b=str_replace("_", " ", $a);
-                            $c=str_word_count($b);
+                            $c=strlen($b);
                             if ($c==1) {$d=strtoupper($b);} 
                             else {$d=ucwords($b);} 
                             echo $d;?>
                             </strong></td>
-                        <td>: {{ $value }}</strong></td>
+                        <td>: {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
                     <tr>
@@ -71,7 +69,7 @@
                               <?php $no = 0; ?>
                               <tbody>
                                 @foreach($dokumen as $dokumen)
-                                <form action="{{ route('draft.verifikasiDok',$surat->no_regist) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('permohonan.verifikasiDok',$surat->no_regist) }}" method="POST" enctype="multipart/form-data">
                                   @csrf
                                   @method('PUT')
                                   <tr>
@@ -98,7 +96,7 @@
                             </table> 
                         </td>
                     </tr>
-                  <form action="{{ route('draft.prosesDraft',$surat->no_regist) }}" method="POST">
+                  <form action="{{ route('permohonan.prosesDraft',$surat->no_regist) }}" method="POST">
                     @csrf
                     @method('PUT')   
 

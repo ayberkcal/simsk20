@@ -21,4 +21,9 @@ class TemplateField extends Model
     {
       return $this->belongsTo(layanan::class,'kode_layanan');
     }
+
+    public function data()
+    {
+      return $this->hasMany(Data::class,'id_field');
+    }
 }

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+ <head>
     <title>SIMSK |</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
     <link href="https://fonts.googleapis.com/css?family=Muli:300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="../fonts/icomoon/style.css">
     <link rel="stylesheet" href="../oneschool/css/bootstrap.min.css">
@@ -17,9 +16,9 @@
     <link rel="stylesheet" href="../oneschool/fonts/flaticon/font/flaticon.css">
     <link rel="stylesheet" href="../oneschool/css/aos.css">
     <link rel="stylesheet" href="../oneschool/css/style.css">
-  </head>
+ </head>
 
-  <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+ <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
   <div class="site-wrap">
     <div class="site-mobile-menu site-navbar-target">
       <div class="site-mobile-menu-header">
@@ -36,10 +35,10 @@
           <div class="mx-auto text-center">
             <nav class="site-navigation position-relative text-right" role="navigation">
               <ul class="site-menu main-menu js-clone-nav mx-auto d-none d-lg-block  m-0 p-0">
-                <li><a href="#home-section" class="nav-link">Home</a></li>
-                <li><a href="#courses-section" class="nav-link">Alur</a></li>
-                <li><a href="#programs-section" class="nav-link">Verifikasi Surat</a></li>
-                <li><a href="#teachers-section" class="nav-link">Cek Progress Surat</a></li>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#alur" class="nav-link">Alur</a></li>
+                <li><a href="#verifikasi" class="nav-link">Verifikasi Surat</a></li>
+                <li><a href="#progress" class="nav-link">Cek Progress Surat</a></li>
               </ul>
             </nav>    
           </div>
@@ -56,8 +55,8 @@
       </div>
     </header>
 
-    <div class="intro-section" id="home-section">
-      <div class="slide-1" style="background-image: url('../oneschool/images/hero_1.jpg');" data-stellar-background-ratio="0.5">
+    <div class="intro-section" id="home">
+      <div class="slide-1" style="background-image: url('../oneschool/images/e.jpg');" data-stellar-background-ratio="0.5">
         <div class="container">
           <div class="row align-items-center">
             <div class="col-12">
@@ -76,7 +75,7 @@
       </div>
     </div>
 
-    <div class="site-section courses-title" id="courses-section">
+    <div class="site-section courses-title" id="alur">
       <div class="container">
         <div class="row mb-5 justify-content-center">
           <div class="col-lg-7 text-center" data-aos="fade-up" data-aos-delay="">
@@ -195,7 +194,7 @@
       </div>
     </div>
 
-    <div class="site-section" id="programs-section">
+    <div class="site-section" id="verifikasi">
       <div class="container">
         <div class="row mb-5 justify-content-center">
           <div class="col-lg-7 text-center"  data-aos="fade-up" data-aos-delay="">
@@ -234,8 +233,17 @@
       </div>
     </div>
 
-    <div class="site-section" id="teachers-section">
+    <div class="site-section" id="progress">
+            <div class="future-blobs">
+        <div class="blob_2">
+          <img src="../oneschool/images/blob_2.svg" alt="Image">
+        </div>
+        <div class="blob_1">
+          <img src="../oneschool/images/blob_1.svg" alt="Image">
+        </div>
+      </div>
       <div class="container">
+
 
         <div class="row mb-5 justify-content-center">
           <div class="col-lg-7 mb-5 text-center"  data-aos="fade-up" data-aos-delay="">
@@ -251,37 +259,16 @@
                       <i class="icon-cursor"></i> Cek</button>
                 </div>
             </div> 
-            <div class="mb-5" id="status">
+            <div class="mb-5" id="status"><img src="../oneschool/images/coba.png" width="200" height="150" alt="Image" class="img-fluid"></a>
             </div>
           </div>
         </div>      
       </div>
     </div>
 
-    <div class="site-section bg-image overlay" style="background-image: url('../oneschool/images/hero_1.jpg');">
-      <div class="container">
-        <div class="row justify-content-center align-items-center">
-          <div class="col-md-8 text-center testimony">
-            <img src="../oneschool/images/person_4.jpg" alt="Image" class="img-fluid w-25 mb-4 rounded-circle">
-            <h3 class="mb-4">Jerome Jensen</h3>
-            <blockquote>
-              <p>&ldquo; Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum rem soluta sit eius necessitatibus voluptate excepturi beatae ad eveniet sapiente impedit quae modi quo provident odit molestias! Rem reprehenderit assumenda &rdquo;</p>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="site-section pb-0">
 
-      <div class="future-blobs">
-        <div class="blob_2">
-          <img src="../oneschool/images/blob_2.svg" alt="Image">
-        </div>
-        <div class="blob_1">
-          <img src="../oneschool/images/blob_1.svg" alt="Image">
-        </div>
-      </div>
+
       <div class="container">
         <div class="row mb-5 justify-content-center" data-aos="fade-up" data-aos-delay="">
           <div class="col-lg-7 text-center">
@@ -329,6 +316,20 @@
           </div>
           <div class="col-lg-7 align-self-end"  data-aos="fade-left" data-aos-delay="200">
             <img src="../oneschool/images/person_transparent.png" alt="Image" class="img-fluid">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section bg-image overlay" style="background-image: url('../oneschool/images/hero_2.jpg');">
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-md-8 text-center testimony">
+            <img src="../oneschool/images/person_4.jpg" alt="Image" class="img-fluid w-25 mb-4 rounded-circle">
+            <h3 class="mb-4">Jerome Jensen</h3>
+            <blockquote>
+              <p>&ldquo; Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum rem soluta sit eius necessitatibus voluptate excepturi beatae ad eveniet sapiente impedit quae modi quo provident odit molestias! Rem reprehenderit assumenda &rdquo;</p>
+            </blockquote>
           </div>
         </div>
       </div>

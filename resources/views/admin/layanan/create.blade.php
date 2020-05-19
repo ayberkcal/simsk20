@@ -89,7 +89,7 @@
                       </div>
                 </div>     
                 <div class="form-group row">
-                    <label class="col-md-2 col-form-label" >Kolom Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
+                    <label class="col-md-2 col-form-label" >Data Tambahan<br><small><font color='blue'>  (sesuaikan dengan file template)</font></small></label>
                     <div class="form-group row col-md-10">
                       <div class="col-md-2">
                         <a id="tambah-field" class="btn btn-success"><i class="icon-plus"></i></a>
@@ -130,7 +130,7 @@
         $('#tambah-ttd').click(function(){
             $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($penandatangan1 as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
 
-            $('#h-status').append("<select class='form-control' name='status[]' id='status_"+pId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($status_ttd as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");
+            $('#h-status').append("<input hidden class='form-control' name='status[]' id='ids_"+pId+"' value='2'><input class='form-control' id='status_"+pId+"' value='Pemaraf' disabled required>");
             pId++;
         });
 
@@ -140,18 +140,18 @@
       
             $('#label_ttd_'+ttd+'').remove();  
             $('#id_user_'+ttd+'').remove();  
-
+            $('#ids_'+ttd+'').remove();  
             $('#label_status_'+ttd+'').remove();  
             $('#status_'+ttd+'').remove();            
             pId--;           
         });
 
         $('#tambah-field').click(function(){
-            $('#lf').append("<label class='col-form-label' id='lf_"+fId+"'>Field*</label>");
+            $('#lf').append("<label class='col-form-label' id='lf_"+fId+"'>Kolom*</label>");
             $('#h-field').append("<input type='text' class='form-control' name='nama_field[]' id='field_"+fId+"' placeholder='ex: nama_ortu' required>");
 
             $('#lt').append("<label class='col-form-label' id='lt_"+fId+"'>Tipe*</label>");
-            $('#h-tipe').append("<select class='form-control' name='tipe_field[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
+            $('#h-tipe').append("<select class='form-control' onchange='ganti(this)' name='tipe_field[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
             fId++;
         });
 
@@ -167,6 +167,7 @@
             fId--;           
         });     
     });
+
     function ValidateInput(file) {
         var FileSize = file.files[0].size / 1024 ; // in KB
         var pathFile = file.value;
@@ -187,6 +188,11 @@
             $('#vsize').remove();
             $('#veks').remove();
         }
+    }
+
+    function ganti(v) {
+        var a = str_replace(" ","_",v.value);
+        v.value=a;
     }
   </script>
 @endsection

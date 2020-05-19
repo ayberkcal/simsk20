@@ -91,7 +91,7 @@ class LayananController extends Controller
         return redirect('/layanan')->with('error','Gagal Menambahkan Layanan Baru!!');  
       }
       DB::commit();
-      return redirect('/layanan')->with('sukses','Berhasil Menambahkan Layanan.');
+      return redirect('/layanan')->with('sukses','Berhasil Menambahkan Layanan '.$request->kode_layanan);
     }
 
     public function show($id)
@@ -126,12 +126,14 @@ class LayananController extends Controller
         $field = TemplateField::where('kode_layanan',$id)->get();
         $tipe_field = config('surat_keluar.tipe_field');
 
-        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','field','tipe_field'));
+        $idf = TemplateField::orderBy('id_field','desc')->first()['id_field'];
+
+        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','field','tipe_field','idf'));
     }
 
     public function update(Request $request, $id)
     {
-      DB::beginTransaction();
+      DB::beginTransaction();   //ubah agar update bukan delete create semua
       try{
         //update tabel layanan
         $layanan = Layanan::findOrFail($id);
@@ -145,8 +147,8 @@ class LayananController extends Controller
             unlink('file/template/'.$layanan->template_file); //menghapus file lama
             $file = $request->file('template_file');
             $ext = $file->getClientOriginalExtension();
-            $name = $request->nama_layanan;
-            $newName = $name.".".$ext;
+            $kode = $request->kode_layanan;
+            $newName = $kode.".".$ext;
             $file->move('file/template',$newName);
             $layanan->template_file = $newName;
         }
@@ -181,15 +183,25 @@ class LayananController extends Controller
             }
         }
 
-      //update tabel template_field
-        $field = TemplateField::where('kode_layanan', $id)->delete();
-        //insert ke tabel template_field
+        //update tabel template_field
+        $idfield = $request->id_field;
         if(($request->nama_field)!=NULL){
             for ($i=0; $i < count($request->nama_field); $i++) { 
-                 TemplateField::create([
-                    'kode_layanan' => $request->kode_layanan,
+                $fields = TemplateField::where('id_field',$idfield[$i])->first(); 
+                $fields->update([
                     'nama_field' => $request->nama_field[$i],
-                    'tipe_field' => $request->tipe_field[$i]
+                    'tipe_field' => $request->tipe_field[$i],
+                ]);
+            }
+        }
+        //insert ke tabel template_field
+        if(($request->nama_fields)!=NULL){
+            for ($i=0; $i < count($request->nama_fields); $i++) { 
+                 TemplateField::create([
+                    'id_field' => $request->id_fields[$i],
+                    'kode_layanan' => $request->kode_layanan,
+                    'nama_field' => $request->nama_fields[$i],
+                    'tipe_field' => $request->tipe_fields[$i]
                 ]);
             }
         }
@@ -197,10 +209,11 @@ class LayananController extends Controller
       }
       catch(\Exception $e){
         DB::rollBack();
-        return redirect('/layanan')->with('error','Gagal Memperbaharui Data Layanan!!');  
+        dd($e);
+        return redirect('/layanan')->with('error','Gagal Memperbaharui Data Layanan'.$id);  
       }
       DB::commit();
-      return redirect('/layanan')->with('sukses','Layanan Berhasil Diperbaharui!!');
+      return redirect('/layanan')->with('sukses','Layanan '.$id.' Berhasil Diperbaharui!!');
     }
 
     public function destroy($id)
@@ -217,6 +230,6 @@ class LayananController extends Controller
         return redirect('/layanan')->with('error','Gagal Menghapus Data!!');  
       }
       DB::commit();      
-      return redirect('/layanan')->with('sukses','Layanan Berhasil Dihapus!!');
+      return redirect('/layanan')->with('sukses','Layanan '.$id.' Berhasil Dihapus!!');
     }
 }

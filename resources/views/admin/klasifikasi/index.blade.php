@@ -47,7 +47,7 @@
                                         <div class="btn-group btn-group show" role="group">
                                             <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">More</button>
                                             <div class="dropdown-menu" aria-labelledby="userActions" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-91px, 35px, 0px);">             
-                                                <a href="{{route('klasifikasi.sub',$klasifikasi->kode_klasifikasi)}}" class="dropdown-item">Sub-Klasifikasi</a>
+                                                <a href="{{route('klasifikasi.sub',$klasifikasi->kode_klasifikasi)}}" class="dropdown-item">Subklasifikasi</a>
                                             </div>
                                         </div> 
                                       </div>

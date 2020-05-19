@@ -44,19 +44,18 @@
                         <td><strong>Tanggal Permohonan</strong></td>
                         <td>: {{ $surat->tgl_permohonan }}</td>
                     </tr>
-                    <?php $datas=json_decode($surat->data);?>
-                    @foreach($datas as $key=>$value)
+                    @foreach($field as $field)
                     <tr>
                         <td><strong>
-                          <?php 
-                            $a=$key; 
+                            <?php 
+                            $a=$field->nama_field; 
                             $b=str_replace("_", " ", $a);
-                            $c=str_word_count($b);
+                            $c=strlen($b);
                             if ($c==1) {$d=strtoupper($b);} 
                             else {$d=ucwords($b);} 
                             echo $d;?>
-                        </strong></td>
-                        <td>: {{ $value }}</strong></td>
+                            </strong></td>
+                        <td>: {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
                     <tr>
