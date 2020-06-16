@@ -34,46 +34,43 @@ class PermohonanController extends Controller
         $user= Auth()->user();
         if ($user->hasRole('admin')) {
             $surats = SuratKeluar::where('status','<=',2)->orderBy('updated_at','DESC')->get();
-            $status_surat = config('surat_keluar.status_surat');
-
-            return view('admin.permohonan.index',compact('surats','status_surat'));
+            return view('admin.permohonan.index',compact('surats'));
         }
-        elseif($user->hasRole('user')) {
-            //ubah jadi order by updated_at
-            $surats = SuratKeluar::select('no_regist','kode_layanan','id_user','tgl_permohonan','tujuan','status','updated_at')->where('status','=',2)->orderBy('updated_at','DESC')->get();
-            $status_surat = config('surat_keluar.status_surat');
-
-            return view('admin.permohonan.index',compact('surats','status_surat'));
+        else{
+            $surats = SuratKeluar::where('status','=',2)->orderBy('updated_at','DESC')->get();
+            return view('admin.permohonan.index',compact('surats'));
         }
-
     }
 
-    public function create()    //go to create draft
+    public function create() //go to create draft
     {
         $layanan = Layanan::all();
-        $pemohon = User::all(); //hidden
-        $kode = "S".sprintf("%04s", SuratKeluar::count()+1);
-        // $dokumen = SyaratLayanan::all(); //ganti $id
-        // // $dokumen = SyaratLayanan::all();
-        // $tipe_file = config('surat_keluar.tipe_file');
-        // $field = TemplateField::all(); //ganti $id
-        // $tipe_field = config('surat_keluar.tipe_field');
+        $pemohon = User::all();                                                     //HAPUS, KARNA DI-HIDDEN
         
+        $max = SuratKeluar::max('no_regist');
+        $noUrut = (int) substr($max, 2, 4) + 1;
+        $kode = "S" . sprintf("%04s", $noUrut);
+
         return view('admin.permohonan.create',compact('layanan','pemohon','kode'));
     }
 
-    public function createAjax($id)    //go to create draft
+    public function createAjax($id) //go to create draft
     {
         $layanan = Layanan::all();
-        $pemohon = User::all(); //hidden
-        $kode = "S".sprintf("%04s", SuratKeluar::count()+1);
+        $pemohon = User::all();                                                     //HAPUS, KARNA DI-HIDDEN
+        $anggota = User::all();
+
+        $max = SuratKeluar::max('no_regist');
+        $noUrut = (int) substr($max, 2, 4) + 1;
+        $kode = "S" . sprintf("%04s", $noUrut);
+
         $dokumen = SyaratLayanan::where('kode_layanan','=',$id)->get();
         $tipe_file = config('surat_keluar.tipe_file');
         $field = TemplateField::where('kode_layanan','=',$id)->get();
         $tipe_field = config('surat_keluar.tipe_field');
         $jSyarat = SyaratLayanan::where('kode_layanan','=',$id)->count();
         
-        return view('admin.permohonan.creates',compact('layanan','pemohon','dokumen','tipe_file','field','tipe_field','kode','jSyarat'))->with('kode_layanan',$id);
+        return view('admin.permohonan.creates',compact('layanan','pemohon','anggota','kode','dokumen','tipe_file','field','tipe_field','jSyarat'))->with('kode_layanan',$id);
     }
 
     public function store(Request $request) //add draft
@@ -86,8 +83,6 @@ class PermohonanController extends Controller
         $test['tgl_permohonan'] = $request->tgl_permohonan;
         $test['tujuan'] = $request->tujuan;
         $test['status'] = 1;
-        // $data = $request->only('nama_ortu','nik'); //ganti field sesuai permintaan(seharusnya semua data)
-        // $test['data'] = json_encode($data);
         $test['created_at'] = date(now());
         $test['updated_at'] = date(now());
         SuratKeluar::insert($test);
@@ -135,40 +130,39 @@ class PermohonanController extends Controller
         return redirect('/permohonan')->with('error','Gagal Menambahkan Permohonan Baru!!');  
       }
       DB::commit();
-      return redirect('/permohonan')->with('sukses','Permohonan Berhasil Dibuat!');
+      return redirect('/permohonan')->with('sukses','Permohonan dengan Nomor Regist: '.$request->no_regist.' Berhasil Dibuat');
     }
 
     //detail permohonan
     public function show($id)
     {
         $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist',$id)->get();
         $field = Data::join('template_field','data.id_field','template_field.id_field')
                      ->where('data.no_regist',$id)->get();
-        return view('admin.permohonan.show',compact('surat','status_surat','field','dokumen'));
+        $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                            ->where('dokumen.no_regist',$id)
+                            ->count();
+
+        return view('admin.permohonan.show',compact('surat','field','dokumen','count'));
     }
 
     public function edit($id)   
     {
         $surat = SuratKeluar::find($id);
-        $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        $tipe_file = config('surat_keluar.tipe_file');
-        // $field = TemplateField::where('kode_layanan','=',$surat['kode_layanan'])->get();
-        // $datas = Data::join('template_field','template_field.id_field','data.id_field')
-        //              ->where('data.no_regist',$id)->get();
-        // SELECT template_field.nama_field, data.data FROM data RIGHT JOIN template_field ON template_field.id_field=data.id_field WHERE template_field.kode_layanan='L002'
-
-        $fields = Data::rightJoin('template_field','data.id_field','template_field.id_field')->where('template_field.kode_layanan',$surat['kode_layanan'])->get();//MASIH MASALAH
-        $tipe_field = config('surat_keluar.tipe_field');
-        $jSyarat = SyaratLayanan::where('kode_layanan','=',$surat['kode_layanan'])->count();
-
-        // $field = SyaratLayanan::where('kode_layanan',$surat['kode_layanan'])->get();
-        // $jSyarat = SyaratLayanan::where('kode_layanan',$surat['kode_layanan'])->count();
-        // $tipe_field = config('surat_keluar.tipe_field');
-        // $dokumen = Dokumen::where('no_regist',$id)->get();
-        // $tipe_file = config('surat_keluar.tipe_file');
-        return view('admin.permohonan.edit',compact('surat','dokumen','tipe_file','fields','tipe_field','jSyarat'));
+        if($surat['status']==1){
+            $dokumen = Dokumen::where('no_regist','=',$id)->get();
+            $tipe_file = config('surat_keluar.tipe_file');
+            // SELECT template_field.nama_field, data.data FROM data RIGHT JOIN template_field ON template_field.id_field=data.id_field WHERE template_field.kode_layanan='L002'
+            //$fields = Data::rightJoin('template_field','data.id_field','template_field.id_field')->where('template_field.kode_layanan',$surat['kode_layanan'])->get();//MASIH MASALAH
+            $fields = Data::rightJoin('template_field','data.id_field','template_field.id_field')->where('data.no_regist',$id)->get();                                                     //MASIH BERMASALAH
+            $tipe_field = config('surat_keluar.tipe_field');
+            $jSyarat = SyaratLayanan::where('kode_layanan','=',$surat['kode_layanan'])->count();
+            return view('admin.permohonan.edit',compact('surat','dokumen','tipe_file','fields','tipe_field','jSyarat'));
+        }
+        else{
+            return redirect('/permohonan')->with('error','Permohonan '.$id.' tidak dapat diedit.'); 
+        }
     }
 
     public function update(Request $request, $id)
@@ -176,41 +170,60 @@ class PermohonanController extends Controller
       DB::beginTransaction();
       try{
         $surat = SuratKeluar::find($id);
-        $request->validate([
-            'kode_layanan' => 'required',
-            'tgl_permohonan' => 'required',
-            'tujuan' => 'required',
-        ]);
-        $surat->update($request->all());
+        // $request->validate([
+        //     'kode_layanan' => 'required',
+        //     'tgl_permohonan' => 'required',
+        //     'tujuan' => 'required',
+        // ]);
+        $permohonan= SuratKeluar::where('no_regist','=',$id)->update([ 'kode_layanan' => $request->kode_layanan, 'tujuan' => $request->tujuan, 'updated_at' => date(now())]);
 
-        $dokumen = Dokumen::where('no_regist', $id)->delete();
-        // store data ke tabel dokumen
-        if(($request->nama_file)!=0){
-            for ($i=0; $i < count($request->nama_file); $i++) { 
-                $dokumen = new Dokumen();
-                $dokumen->no_regist = $request->no_regist;
-                $dokumen->kode_layanan = $request->kode_layanan;
-                $dokumen->id_syarat = $request->id_syarat[$i];
-                $dokumen->nama_file = $datas[$i];
-                $dokumen->save();
+        
+        $dokumen = Dokumen::where('no_regist',$id)->get();
+        if ($request->nama_file!=NULL) {
+            $pjg_array = count($dokumen);
+            for ($k=0;$k<$pjg_array;$k++)
+            {
+                $data="../public/file/dokumen/".$dokumen[$k]['nama_file'];
+                File::delete($data);
+            }
+
+            $dok = Dokumen::where('no_regist',$id)->delete();
+            
+            if ($request->hasFile('nama_file')) {
+                $ids=1;
+                foreach ($request->file('nama_file') as $file) {
+                    $no = $request->no_regist;
+                    $ext = $file->getClientOriginalExtension();
+                    $newName = $no."_".$ids.".".$ext;
+                    $file->move('file/dokumen',$newName);
+                    $datas[] = $newName;
+                    ++$ids;
+                }
+            }
+            if(($request->nama_file)!=0){
+                for ($i=0; $i < count($request->nama_file); $i++) { 
+                    $dokumen = new Dokumen();
+                    $dokumen->no_regist = $request->no_regist;
+                    $dokumen->kode_layanan = $request->kode_layanan;
+                    $dokumen->id_syarat = $request->id_syarat[$i];
+                    $dokumen->nama_file = $datas[$i];
+                    $dokumen->save();
+                }
             }
         }
 
-        $field = Data::where('no_regist', $id)->delete();
-        // store data ke tabel data
-        if(($request->data)!=0){
+        //update tabel data
+        $idField = $request->id_field;
+        if(($request->data)!=NULL){
             for ($i=0; $i < count($request->data); $i++) { 
-                $field = new Data();
-                $field->no_regist = $request->no_regist;
-                $field->kode_layanan = $request->kode_layanan;
-                $field->id_field = $request->id_field[$i];
-                $field->data = $request->data[$i];
-                $field->save();
+                $fields = Data::where('no_regist','=',$id)->where('id_field','=',$idField[$i])->update([ 'data' => $request->data[$i] ]);
             }
         }
+
       }
       catch(\Exception $e){
         DB::rollBack();
+        dd($e);
         return redirect('/permohonan')->with('error','Gagal Memperbaharui Permohonan!!');  
       }
       DB::commit();
@@ -245,44 +258,46 @@ class PermohonanController extends Controller
     public function getDraft($id)
     {
         $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
-        $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        $field = Data::join('template_field','data.id_field','template_field.id_field')
-                     ->where('data.no_regist',$id)->get();
+        if(($surat['status']==1)||($surat['status']==2)){
+            $dokumen = Dokumen::where('no_regist','=',$id)->get();
+            $field = Data::join('template_field','data.id_field','template_field.id_field')
+                         ->where('data.no_regist',$id)->get();
 
-        //generate no surat
-        $kode=SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
-                         ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
-                         ->where('surat_keluar.no_regist','=',$id)->first();
+            //----------------------------------------------------------------------mulai generate no surat
+            $kode=SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
+                             ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
+                             ->where('surat_keluar.no_regist','=',$id)->first();
 
-        $format = SubKlasifikasi::where('kode_sub',$kode['kode_sub'])->first();
-        $a = $format['penomoran'];
+            $format = SubKlasifikasi::where('kode_sub',$kode['kode_sub'])->first();
+            $a = $format['penomoran'];
 
-        //mengambil no urut (no urut ini dimulai dari 1 setiap klasifikasi per tahunnya)
-        $nos = SuratKeluar::join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
-                          ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
-                          ->join('klasifikasi','sub_klasifikasi.kode_klasifikasi','=','klasifikasi.kode_klasifikasi')
-                          ->where('klasifikasi.kode_klasifikasi',$kode['kode_klasifikasi'])
-                          ->where('surat_keluar.status','>',1)
-                          ->whereYear('surat_keluar.tgl_permohonan','=',date('Y'))
-                          ->count();
-        $no = str_replace("[no_urut]", $nos+1, $a);
-        //no surat:
-        $thn = str_replace("[tahun]", date('Y'), $no);
-        //akhir generate no surat
+            //mengambil no urut (no urut ini dimulai dari 1 setiap klasifikasi per tahunnya)
+            $nos = SuratKeluar::join('layanan','surat_keluar.kode_layanan','=','layanan.kode_layanan')
+                              ->join('sub_klasifikasi','layanan.kode_sub','=','sub_klasifikasi.kode_sub')
+                              ->join('klasifikasi','sub_klasifikasi.kode_klasifikasi','=','klasifikasi.kode_klasifikasi')
+                              ->where('klasifikasi.kode_klasifikasi',$kode['kode_klasifikasi'])
+                              ->where('surat_keluar.status','>',1)
+                              ->whereYear('surat_keluar.tgl_permohonan','=',date('Y'))
+                              ->count();
+            $no = str_replace("[no_urut]", $nos+1, $a);
+            //no surat:
+            $thn = str_replace("[tahun]", date('Y'), $no);
+            //----------------------------------------------------------------------akhir generate no surat
 
-        //hitung jumlah dokumen yang belum diverifikasi
-        $verify = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
-                             ->where('dokumen.no_regist',$id)
-                             ->where('dokumen.verifikasi',1)
-                             ->count();
+            //hitung jumlah dokumen yang belum diverifikasi
+            $verify = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                                 ->where('dokumen.no_regist',$id)
+                                 ->where('dokumen.verifikasi',1)
+                                 ->count();
 
-        //hitung jumlah dokumen persyaratan
-        $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
-                            ->where('dokumen.no_regist',$id)
-                            ->count();
+            //hitung jumlah dokumen persyaratan
+            $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                                ->where('dokumen.no_regist',$id)
+                                ->count();
 
-        return view('admin.permohonan.prosesDraft',compact('surat','status_surat','dokumen','field','thn','verify','count'));
+            return view('admin.permohonan.prosesDraft',compact('surat','dokumen','field','thn','verify','count'));
+        }
+
     }
 
     //verifikasi dokumen persyaratan
@@ -325,17 +340,16 @@ class PermohonanController extends Controller
                                     ->where('surat_keluar.no_regist','=',$id)
                                     ->where('penandatangan.status','=','1')
                                     ->get();
-        $user = SuratKeluar::select('user.*','dosen_tendik.*')
-                                      ->join('user','surat_keluar.id_user','=','user.id_user')
+        $user = SuratKeluar::join('user','surat_keluar.id_user','=','user.id_user')
                                       ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
                                       ->where('surat_keluar.no_regist','=',$id)
                                       ->get();
         $dataTambahan = Data::join('template_field','data.id_field','template_field.id_field')
                             ->where('data.no_regist',$id)->get();
 
-        $template = Layanan::where('kode_layanan','L002')->first();
+        $template = Layanan::where('kode_layanan',$surat['kode_layanan'])->first();
 
-//kodingan generate surat disini
+        //------------------------------------------------------------------------------mulai generate surat 
         $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('../public/file/template/'.$template['template_file']);
         
         //data penandatangan
@@ -348,8 +362,9 @@ class PermohonanController extends Controller
                 'penandatangan_jabatan'=>$k->jabatan,
             ]);
         }
+
         //data pemohon yang diambil dari tabel user
-        $fieldUser = $surat->user->only('id_user','nama','alamat','tempat_lahir','tgl_lahir','jekel'); //ganti field sesuai permintaan atau all kan
+        $fieldUser = $surat->user;
         $dataUserE = json_encode($fieldUser);
         $dataUserD = json_decode($dataUserE);
         foreach($dataUserD as $key=>$value){
@@ -374,14 +389,6 @@ class PermohonanController extends Controller
             'tgl_surat' => date('d F Y'),
             'tujuan' => $surat->tujuan,
         ]);
-
-        // //data dari field tambahan di kolom data di tabel surat
-        // $datas = json_decode($surat->data);
-        // foreach($datas as $key=>$value){
-        //     $templateProcessor->setValues([
-        //         $key=>$value, 
-        //     ]);
-        // }
 
         //data dari tabel data
         foreach ($dataTambahan as $d) {    
@@ -414,6 +421,12 @@ class PermohonanController extends Controller
             'fakultas'=>'Teknologi Infomasi',
             'jurusan' => $jurusan,
         ]);
+                                                                                            //CONTOH CLONING
+        $values = [
+            ['userId' => 1, 'userName' => 'Ami', 'userAddress' => '1511521007'],
+            ['userId' => 2, 'userName' => 'Tenti', 'userAddress' => '1511522007'],
+        ];
+        $templateProcessor->cloneRowAndSetValues('userId',$values);
 
         //generate to word
         $templateProcessor->saveAs('../public/file/draft/'.$id.'.docx');
@@ -422,6 +435,8 @@ class PermohonanController extends Controller
         ConvertApi::setApiSecret('Q1SKMWQh0Ei2Zb68');
         $result = ConvertApi::convert('pdf', ['File' => '../public/file/draft/'.$id.'.docx']);
         $result->getFile()->save('../public/file/draft/'.$id.'.pdf');
+
+        //------------------------------------------------------------------------------akhir generate surat
 
         $jmlhSigner=SuratKeluar::join("layanan","surat_keluar.kode_layanan","layanan.kode_layanan")
                                ->join("penandatangan","layanan.kode_layanan","penandatangan.kode_layanan")
@@ -433,6 +448,7 @@ class PermohonanController extends Controller
         else{
             $status=3;
         }
+
         $suratUpdate = SuratKeluar::where('no_regist','=',$id)->update(['no_surat' => $request->no_surat, 'tgl_surat' => $request->tgl_surat, 'nama_file' => $id.'.pdf' , 'keterangan' => NULL, 'verifikasi' => $jmlhSigner , 'status' => $status]);
       }
       catch(\Exception $e){
@@ -444,10 +460,4 @@ class PermohonanController extends Controller
       return redirect('/permohonan')->with('info','Draft surat '.$id.' sedang diproses!');
     }
 
-//belum jelas
-    public function layananAjax($id){
-        $dokumen = SyaratLayanan::where('kode_layanan',$id)->get();
-
-        return $dokumen;
-    }
 }

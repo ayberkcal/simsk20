@@ -128,7 +128,7 @@
         });
 
         $('#tambah-ttd').click(function(){
-            $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($penandatangan1 as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
+            $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($pemaraf as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
 
             $('#h-status').append("<input hidden class='form-control' name='status[]' id='ids_"+pId+"' value='2'><input class='form-control' id='status_"+pId+"' value='Pemaraf' disabled required>");
             pId++;

@@ -60,6 +60,7 @@
                     @endforeach
                     <tr>
                         <td><strong>Dokumen Persyaratan</strong></td>
+                        @if($count!=0)
                         <td>
                             <table class="table table-responsive-sm table-sm">
                               <thead>
@@ -74,7 +75,7 @@
                                 @foreach($dokumen as $dokumen)
                                   <tr>
                                     <td>{{++$no}}</td>
-                                    <td>{{$dokumen->syarat->nama_syarat}} ({{$dokumen->verifikasi}})</td>
+                                    <td>{{$dokumen->syarat->nama_syarat}}</td>
                                     <td><a href="{{url('file/draft/'.$dokumen->nama_file)}}">
                                         <i class="cil-file"></i> {{$dokumen->nama_file}}</a>
                                     </td>
@@ -83,6 +84,9 @@
                               </tbody>
                             </table> 
                         </td>
+                        @else
+                        <td><label> -</label></td>
+                        @endif
                     </tr>
                     <tr>
                         <td><strong>Nomor Surat</strong></td>
@@ -95,7 +99,7 @@
                     <tr bgcolor="lightsteelblue">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              {{ $status_surat[$surat->status] }}</span>
+                              {{$surat->statuss->name}}</span>
                         </td>
                     </tr>                      
                   </tbody>

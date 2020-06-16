@@ -10,11 +10,18 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-   use Illuminate\Http\Request;
-Route::group(['middleware' => ['get.menu']], function () {
-    Route::get('/', function () {           return view('dashboard.authBase'); });
+date_default_timezone_set("ASIA/JAKARTA");
 
-    Route::group(['middleware' => ['role:user']], function () {
+Route::group(['middleware' => ['get.menu']], function () {
+    Route::get('/', function () { return view('dashboard.authBase'); });
+
+    Route::group(['middleware' => ['role:sivitas']], function () {
+         Route::resource('permohonan','PermohonanController');
+        Route::get('permohonan/createAjax/{id}','PermohonanController@createAjax')->name('permohonan.createAjax');
+        Route::get('permohonan/{permohonan}/getDraft','PermohonanController@getDraft')->name('permohonan.getDraft');
+        Route::put('permohonan/{permohonan}/verifikasiDok','PermohonanController@verifikasiDok')->name('permohonan.verifikasiDok');
+        Route::put('permohonan/{permohonan}/getDraft-t', 'PermohonanController@tolakPermohonan')->name('permohonan.tolakPermohonan');
+        Route::put('permohonan-proses/{draft}','PermohonanController@prosesDraft')->name('permohonan.prosesDraft');
         Route::get('/colors', function () {     return view('dashboard.colors'); });
         Route::get('/typography', function () { return view('dashboard.typography'); });
         Route::get('/charts', function () {     return view('dashboard.charts'); });
@@ -119,8 +126,6 @@ Route::group(['middleware' => ['get.menu']], function () {
         Route::put('permohonan/{permohonan}/verifikasiDok','PermohonanController@verifikasiDok')->name('permohonan.verifikasiDok');
         Route::put('permohonan/{permohonan}/getDraft-t', 'PermohonanController@tolakPermohonan')->name('permohonan.tolakPermohonan');
         Route::put('permohonan-proses/{draft}','PermohonanController@prosesDraft')->name('permohonan.prosesDraft');
-            //*belum berfungsi dengan baik*
-             Route::get('permohonan/create/{id}','PermohonanController@layananAjax')->name('layananAjax');
             
         //manajemen draft
         Route::get('draft','DraftSuratController@index')->name('draft.index');
@@ -132,9 +137,13 @@ Route::group(['middleware' => ['get.menu']], function () {
         //penandatanganan
         Route::get('draft/{draft}/getFile','DraftSuratController@getFile')->name('draft.getFile');
         Route::put('draft-sign/{draft}','DraftSuratController@sign')->name('draft.sign');
-            //*unsign*
+                                                                                                    //UNSIGN
 
         //manajemen surat keluar
-        Route::resource('suratkeluar','SuratKeluarController'); //*ubah sesuai yang dibutuhkan saja(index,show,download)*
+        Route::resource('suratkeluar','SuratKeluarController'); //UBAH SESUAI YG PERLU AJA(index,show,download)
+
+        //manajemen user+dosen_tendik
+        Route::resource('pengguna','UserController');
+        Route::get('test123','UserController@test')->name('user.test123');
     });
 });

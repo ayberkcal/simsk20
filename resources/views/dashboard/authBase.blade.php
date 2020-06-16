@@ -45,7 +45,7 @@
           <div class="ml-auto w-25">
             <nav class="site-navigation position-relative text-right" role="navigation">
               <ul class="site-menu main-menu site-menu-dark js-clone-nav mr-auto d-none d-lg-block m-0 p-0">
-                <a href="{{route('klasifikasi.index')}}" class="nav-link"><span>Dashboard</span></a>
+                <a href="{{route('dashboard')}}" class="nav-link"><span>Dashboard</span></a>
                 <li class="cta"><a href="{{url('login')}}" class="nav-link"><span>Login</span></a></li>
               </ul>
             </nav>

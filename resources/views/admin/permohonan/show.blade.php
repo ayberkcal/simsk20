@@ -7,36 +7,57 @@
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home" aria-selected="true">
-              <i class="cil-list"></i> Data Permohonan ({{ $surat->no_regist }})
+              <i class="cil-list"></i> Data Permohonan
             </a>
         </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="home3" role="tabpanel">
-          <div class="container">
-            <div class="card uper" >
+          <div class="row">
+           <div class="col-lg-3">
+            <div class="card border-dark">
               <div class="card-body">
-                <table class="table table-responsive-sm ">
-                  <tbody>
-                    <tr>
-                        <td width="300px"><strong>No. Regist</strong></td>
+                <table class="table-sm table-responsive-sm">
+                    <tbody>
+                      <tr>
+                        <td><strong>No. Regist</strong></td>
                         <td>: {{ $surat->no_regist }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Layanan</strong></td>
-                        <td>: {{ $surat->layanan->nama_layanan }}</td>
-                    </tr>
-                    <tr>
+                      </tr>
+                      <tr>
                         <td><strong>Pemohon</strong></td>
                         <td>: {{ $surat->user->nama }}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Status</strong></td>
+                        <td> <span class="{{ $surat->statuss->class }}">
+                              {{$surat->statuss->name}}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>Keterangan</strong></td>
+                        <td>: {{ $surat->keterangan }}</td>
+                      </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+           </div>
+           <div class="col-lg-9">
+            <div class="card uper">
+              <div class="card-body">
+                <table class="table table-responsive-sm table-bordered table-sm">
+                  <tbody>
+                    <tr>
+                        <td width="200px"><strong>Layanan</strong></td>
+                        <td> {{ $surat->layanan->nama_layanan }}</td>
                     </tr>
                     <tr>
                         <td><strong>Tanggal Permohonan</strong></td>
-                        <td>: {{ $surat->tgl_permohonan }}</td>
+                        <td> {{ $surat->tgl_permohonan }}</td>
                     </tr>
                     <tr>
                         <td><strong>Tujuan</strong></td>
-                        <td>: {{ $surat->tujuan }}</td>
+                        <td> {{ $surat->tujuan }}</td>
                     </tr>
                     @foreach($field as $field)
                     <tr>
@@ -49,21 +70,13 @@
                             else {$d=ucwords($b);} 
                             echo $d;?>
                             </strong></td>
-                        <td>: {{$field->data}}</strong></td>
+                        <td> {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
-                    <tr bgcolor="honeydew">
-                        <td><strong>Status</strong></td>
-                        <td>: <span class="{{ $surat->statuss->class }}">
-                              {{ $status_surat[$surat->status] }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Keterangan</strong></td>
-                        <td>: {{ $surat->keterangan }}</td>
-                    </tr>
+                    
                     <tr>
                         <td><strong>Persyaratan</strong></td>
+                        @if($count!=0)
                         <td>
                           <table class="table table-responsive-sm table-sm">
                             <thead>
@@ -90,11 +103,15 @@
                             </tbody>
                           </table>
                         </td>
-                    </tr>
-                </tbody>
-            </table>
+                        @else
+                        <td><label> -</label></td>
+                        @endif
+                    </tr>  
+                  </tbody>
+                </table>
               </div>  
             </div>
+           </div>
           </div>
         </div>
     </div>

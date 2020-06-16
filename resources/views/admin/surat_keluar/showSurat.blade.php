@@ -72,7 +72,7 @@
                     <tr bgcolor="lightgreen">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}"> 
-                              {{ $status_surat[$surat->status] }}</span>
+                              {{$surat->statuss->name}}</span>
                         </td>
                     </tr>
                     <tr>
@@ -81,6 +81,7 @@
                     </tr> 
                     <tr>
                         <td><strong>Dokumen Persyaratan</strong></td>
+                        @if($count!=0)
                         <td>
                           <table class="table table-responsive-sm table-sm">
                             <thead>
@@ -107,6 +108,9 @@
                             </tbody>
                           </table>
                         </td>
+                        @else
+                        <td><label> -</label></td>
+                        @endif
                     </tr>                   
                   </tbody>
                  </table>

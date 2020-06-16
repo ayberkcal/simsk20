@@ -12,9 +12,8 @@ class SuratKeluarController extends Controller
     public function index()
     {
         $surat = SuratKeluar::where('status','=',5)->orderBy('tgl_surat','desc')->get();
-        $status_surat = config('surat_keluar.status_surat');
 
-        return view('admin.surat_keluar.index',compact('surat','status_surat'));
+        return view('admin.surat_keluar.index',compact('surat'));
     }
 
     /**
@@ -47,12 +46,14 @@ class SuratKeluarController extends Controller
     public function show($id)
     {
         $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
         $dokumen = Dokumen::where('no_regist','=',$id)->get();
         $field = Data::join('template_field','data.id_field','template_field.id_field')
                      ->where('data.no_regist',$id)->get();
+        $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                            ->where('dokumen.no_regist',$id)
+                            ->count();
        
-        return view('admin.surat_keluar.showSurat',compact('surat','status_surat','dokumen','field'));
+        return view('admin.surat_keluar.showSurat',compact('surat','dokumen','field','count'));
     }
 
     /**

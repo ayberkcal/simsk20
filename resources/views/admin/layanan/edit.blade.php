@@ -40,7 +40,7 @@
                     <div class="col-md-10">
                       <a href="{{url('file/template/'.$layanan->template_file)}}">
                         <i class="cil-description"></i> {{$layanan->template_file}}</a>
-                      <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" onchange="ValidateInput(this)" value="$layanan->template_file" />
+                      <input type="file" class="form-control-file" id="template_file" name="template_file" accept=".docx" onchange="ValidateInput(this)"/>
                       <small id="size"><font color='blue'>(ukuran file maks = 200 KB, ekstensi file = .docx)</font></small>
                     </div>
                 </div>   
@@ -63,7 +63,7 @@
                         @foreach($penandatangan as $penandatangan)
                           <div class="col-md-6" id="id_user{{$tId}}">
                             <select class="form-control" name="id_user[]"  required>    
-                              @foreach($penandatangan1 as $ttd)
+                              @foreach($pemaraf as $ttd)
                                 <option value="{{$ttd->id_user}}"}} @if($ttd->id_user == $penandatangan->id_user) selected="true" @endif>{{$ttd->nama}}</option>
                               @endforeach 
                             </select>
@@ -153,7 +153,7 @@
         });
 
         $('#tambah-ttd').click(function(){
-            $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($penandatangan1 as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
+            $('#h-ttd').append("<select name='id_user[]' class='form-control' id='id_user_"+pId+"' required> <option value='' disabled selected>--Pilih--</option>@foreach($pemaraf as $ttd)<option value='{{$ttd->id_user}}'> {{$ttd->nama}}</option>@endforeach </select>");
 
             $('#h-status').append("<input hidden class='form-control' name='status[]' id='ids_"+pId+"' value='2'><input class='form-control' id='status_"+pId+"' value='Pemaraf' disabled required>");
             pId++;
@@ -186,10 +186,10 @@
         $('#tambah-field').click(function(){
             var i = parseInt(idf) + id_f;
             $('#lf').append("<label class='col-form-label' id='lf_"+fId+"'>Kolom*</label>");
-            $('#h-field').append("<input hidden name='id_fields[]' value='"+i+"' id='id_"+fId+"'><input type='text' class='form-control' name='nama_fields[]' id='field_"+fId+"' placeholder='ex: nama_ortu' required>");
+            $('#h-field').append("<input hidden name='id_field[]' value='"+i+"' id='id_"+fId+"'><input type='text' class='form-control' name='nama_field[]' id='field_"+fId+"' placeholder='ex: nama_ortu' required>");
 
             $('#lt').append("<label class='col-form-label' id='lt_"+fId+"'>Tipe*</label>");
-            $('#h-tipe').append("<select class='form-control' name='tipe_fields[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
+            $('#h-tipe').append("<select class='form-control' name='tipe_field[]' id='tipe_"+fId+"' required><option value='' disabled selected>--Pilih--</option>@foreach($tipe_field as $key=>$value)<option value='{{$key}}'>{{$value}}</option> @endforeach</select>");    
             fId++; id_f++;
         });
 

@@ -13,9 +13,9 @@ class User extends Model
     
     protected $table = 'user';
     
-    protected $fillable = [
-      'id_user','nama','tempat_lahir','tgl_lahir','jekel','email','password','alamat','hp','agama','foto','jenis_user'
-    ];
+    // protected $fillable = [
+    //   'id_user','nama','tempat_lahir','tgl_lahir','jekel','email','password','alamat','hp','agama','foto','jenis_user'
+    // ];
 
     public function suratkeluar()
     {

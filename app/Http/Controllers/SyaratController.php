@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Syarat;
 use Illuminate\Http\Request;
+use App\Models\Syarat;
 
 class SyaratController extends Controller
 {
@@ -26,7 +26,7 @@ class SyaratController extends Controller
             'nama_syarat' => 'required|unique:syarat'
         ]);
         Syarat::create($request->all());
-        return redirect('/syarat')->with('sukses','Berhasil Menambahkan Data.');
+        return redirect('/syarat')->with('sukses','Berhasil Menambahkan Syarat '.$request->nama_syarat);
     }
 
     public function edit($id)
@@ -39,17 +39,17 @@ class SyaratController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_syarat' => 'required|unique:syarat'
+            'nama_syarat' => 'required|unique:syarat,nama_syarat,'.$id.',id_syarat'
         ]);
         $syarat = Syarat::find($id);
         $syarat->update($request->all());
-        return redirect('/syarat')->with('sukses','Berhasil Memperbaharui Data!!');
+        return redirect('/syarat')->with('sukses','Berhasil Memperbaharui Data.');
     }
 
     public function destroy($id)
     {
         $syarat = Syarat::find($id);
         $syarat->delete();
-        return redirect('/syarat')->with('sukses','Berhasil Menghapus Data!!');
+        return redirect('/syarat')->with('sukses','Berhasil Menghapus Syarat '.$syarat->nama_syarat);
     }
 }

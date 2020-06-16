@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Klasifikasi;
 use App\Models\SubKlasifikasi;
 
@@ -21,7 +22,6 @@ class KlasifikasiController extends Controller
 
     public function store(Request $request)
     {
-
         $validasi=$request->validate([
             'kode_klasifikasi' => 'required|unique:klasifikasi',
             'klasifikasi' => 'required'
@@ -29,7 +29,7 @@ class KlasifikasiController extends Controller
 
         $klasifikasis = Klasifikasi::create($validasi);
 
-        return redirect('/klasifikasi')->with('sukses','Berhasil Menambahkan Data.');
+        return redirect('/klasifikasi')->with('sukses','Berhasil Menambahkan Klasifikasi '.$request->kode_klasifikasi);
     }
 
     public function edit(klasifikasi $klasifikasi)
@@ -40,18 +40,18 @@ class KlasifikasiController extends Controller
     public function update(Request $request, klasifikasi $klasifikasi)
     {
         $request->validate([
-            'kode_klasifikasi' => 'required|unique:klasifikasi',
+            'kode_klasifikasi' => Rule::unique('klasifikasi')->ignore($klasifikasi),
             'klasifikasi' => 'required'
         ]);
 
         $klasifikasi->update($request->all());
-        return redirect('/klasifikasi')->with('sukses','data berhasil diupdate!');
+        return redirect('/klasifikasi')->with('sukses','Berhasil Memperbaharui Data.');
     }
 
     public function destroy($kode_klasifikasi)
     {
         $klasifikasis=Klasifikasi::where('kode_klasifikasi',$kode_klasifikasi)->delete();
-        return redirect('/klasifikasi')->with('sukses','Data berhasil dihapus!');
+        return redirect('/klasifikasi')->with('sukses','Berhasil Menghapus Klasifikasi '.$kode_klasifikasi);
     }
 
     //show list data sub klasifikasi

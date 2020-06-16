@@ -57,6 +57,7 @@
                     <tr>
                         <td><strong>Dokumen Persyaratan</strong><small><font color='blue'> (verifikasi dokumen persyaratan)</small></td>
                         <td>
+                          @if($count!=0)
                             <table class="table table-responsive-sm table-sm">
                               <thead>
                                 <tr>
@@ -94,6 +95,9 @@
                                 @endforeach
                               </tbody>
                             </table> 
+                          @else
+                            <label>: -</label>
+                          @endif
                         </td>
                     </tr>
                   <form action="{{ route('permohonan.prosesDraft',$surat->no_regist) }}" method="POST">
@@ -119,7 +123,7 @@
                     <tr bgcolor="ghostwhite">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              {{ $status_surat[$surat->status] }}</span>
+                              {{$surat->statuss->name}}</span>
                         </td>
                     </tr>
                     <tr bgcolor="#F5FFFA">

@@ -32,11 +32,15 @@ class GetSidebarMenu implements MenuInterface{
     }
 
     private function getUserMenu( $menuId ){
-        $this->getMenuFromDB($menuId, 'user');
+        $this->getMenuFromDB($menuId, 'sivitas');
     }
 
     private function getAdminMenu( $menuId ){
         $this->getMenuFromDB($menuId, 'admin');
+    }
+
+    private function getPetugasMenu( $menuId ){
+        $this->getMenuFromDB($menuId, 'petugas');
     }
 
     public function get($role, $menuId=2){

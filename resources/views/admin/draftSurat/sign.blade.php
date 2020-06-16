@@ -65,11 +65,41 @@
                         <td>: {{$field->data}}</strong></td>
                     </tr>
                     @endforeach
+                    <tr>
+                        <td><strong>Dokumen Persyaratan</strong></td>
+                        @if($count!=0)
+                        <td>
+                            <table class="table table-responsive-sm table-sm">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Syarat</th>
+                                  <th>Dokumen</th>
+                                </tr>
+                              </thead>
+                              <?php $no = 0; ?>
+                              <tbody>
+                                @foreach($dokumen as $dokumen)
+                                  <tr>
+                                    <td>{{++$no}}</td>
+                                    <td>{{$dokumen->syarat->nama_syarat}}</td>
+                                    <td><a href="{{url('file/draft/'.$dokumen->nama_file)}}">
+                                        <i class="cil-file"></i> {{$dokumen->nama_file}}</a>
+                                    </td>
+                                  </tr>
+                                @endforeach
+                              </tbody>
+                            </table> 
+                        </td>
+                        @else
+                        <td><label> -</label></td>
+                        @endif
+                    </tr>
                     <tr><td></td><td></td></tr>
                     <tr bgcolor="lightblue">
                         <td><strong>Status</strong></td>
                         <td>: <span class="{{ $surat->statuss->class }}">
-                              {{ $status_surat[$surat->status] }}</span>
+                              {{$surat->statuss->name}}</span>
                         </td>
                     </tr>
                     <tr>

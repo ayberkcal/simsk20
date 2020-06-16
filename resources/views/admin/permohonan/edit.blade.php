@@ -30,23 +30,22 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Layanan *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="kode_layanan" value="{{$surat->layanan->nama_layanan}}" readonly>
+                    <input hidden name="kode_layanan" value="{{$surat->kode_layanan}}">
+                    <input type="text" class="form-control" value="{{$surat->layanan->nama_layanan}}" readonly>
                 </div>
             </div>
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Tujuan *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="tujuan" required autocomplete="off" value="{{$surat->tujuan}}" />
+                    <input type="text" class="form-control" name="tujuan" required value="{{$surat->tujuan}}" />
                 </div>
             </div>   
             <div class="form-group row" id="field">
                 @foreach($fields as $fields)
-
                 <label class='col-md-2 col-form-label'><?php $a=$fields->nama_field; $b=str_replace("_", " ", $a); $c=strlen($b); if ($c<=4) {$d=strtoupper($b);} else {$d=ucwords($b);} echo $d;?> *</label>
                     <div class='col-md-10'>
-                        <!-- masih error -->
-                        <input type="{{$tipe_field[$fields->tipe_field]}}" class="form-control" name="{{$fields->nama_field}}" value="{{$fields->data}}" required>
-                      
+                        <input hidden name="id_field[]" value="{{$fields->id_field}}">
+                        <input type="{{$tipe_field[$fields->tipe_field]}}" name ="data[]" class="form-control" value="{{$fields->data}}" required>
                     </div><br><br>
                 @endforeach
             </div> 
@@ -70,7 +69,7 @@
                           <td>{{$dokumen->syarat->nama_syarat}}</td>
                           <input hidden name='id_syarat[]' value='{{$dokumen->id_syarat}}'>
                           <td>
-                            <input type='file' class='' id='nama_file' name='nama_file[]' accept='{{$tipe_file[$dokumen->syarat->tipe_file]}}' required/>
+                            <input type='file' class='' id='nama_file' name='nama_file[]' accept='{{$tipe_file[$dokumen->syarat->tipe_file]}}' value="{{$dokumen->nama_file}}"/>
                             <a href="{{url('file/dokumen/'.$dokumen->nama_file)}}"><i class="cil-description"></i> {{$dokumen->nama_file}}</a>
                           </td>
                         </tr>

@@ -26,11 +26,15 @@ class LayananController extends Controller
         $sub=SubKlasifikasi::all();
         $syarat=Syarat::all();
         $penandatangan=User::where('jenis_user','!=',1)->get();
-        $penandatangan1=User::where('jenis_user','!=',1)->get();
+        $pemaraf=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
         $tipe_field = config('surat_keluar.tipe_field');
-        $kode = "L".sprintf("%03s", Layanan::count()+1);
-        return view('admin.layanan.create',compact('sub','syarat','penandatangan','penandatangan1','status_ttd','tipe_field','kode'));
+        
+        $max = Layanan::max('kode_layanan');
+        $noUrut = (int) substr($max, 2, 3) + 1;
+        $kode = "L" . sprintf("%03s", $noUrut);
+
+        return view('admin.layanan.create',compact('sub','syarat','penandatangan','pemaraf','status_ttd','tipe_field','kode'));
     }
 
     public function store(Request $request)
@@ -62,7 +66,7 @@ class LayananController extends Controller
             }
         }
         //insert ke tabel penandatangan
-        // validasi composite key belum
+                                                                                // VALIDASI COMPOSITE KEY BELUM
         if(($request->id_user)!=NULL){
             for ($i=0; $i < count($request->id_user); $i++) { 
                  PenandaTangan::create([
@@ -120,7 +124,7 @@ class LayananController extends Controller
         // foreach ($layanan->penandatangan as $layanansigner) {
         //     $urutan[] = $layanansigner->id_user;
         // }
-        $penandatangan1=User::where('jenis_user','!=',1)->get();
+        $pemaraf=User::where('jenis_user','!=',1)->get();
         $status_ttd = config('surat_keluar.penandatangan');
         
         $field = TemplateField::where('kode_layanan',$id)->get();
@@ -128,12 +132,12 @@ class LayananController extends Controller
 
         $idf = TemplateField::orderBy('id_field','desc')->first()['id_field'];
 
-        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','syarat1','penandatangan','jmlh','penandatangan1','status_ttd','field','tipe_field','idf'));
+        return view('admin.layanan.edit',compact('urutan','layanan','sub','syarat','penandatangan','pemaraf','status_ttd','field','tipe_field','idf'));
     }
 
     public function update(Request $request, $id)
     {
-      DB::beginTransaction();   //ubah agar update bukan delete create semua
+      DB::beginTransaction();                               //EDIT LAYANAN MASIH RAGU BAGAIMANA ALGORTIMANYA
       try{
         //update tabel layanan
         $layanan = Layanan::findOrFail($id);
@@ -183,25 +187,26 @@ class LayananController extends Controller
             }
         }
 
-        //update tabel template_field
-        $idfield = $request->id_field;
+        // //update tabel template_field
+        // $idfield = $request->id_field;
+        // if(($request->nama_field)!=NULL){
+        //     for ($i=0; $i < count($request->nama_field); $i++) { 
+        //         $fields = TemplateField::where('id_field',$idfield[$i])->first(); 
+        //         $fields->update([
+        //             'nama_field' => $request->nama_field[$i],
+        //             'tipe_field' => $request->tipe_field[$i],
+        //         ]);
+        //     }
+        // }
+        $field = TemplateField::where('kode_layanan', $id)->delete();
+        //insert ke tabel template_field
         if(($request->nama_field)!=NULL){
             for ($i=0; $i < count($request->nama_field); $i++) { 
-                $fields = TemplateField::where('id_field',$idfield[$i])->first(); 
-                $fields->update([
-                    'nama_field' => $request->nama_field[$i],
-                    'tipe_field' => $request->tipe_field[$i],
-                ]);
-            }
-        }
-        //insert ke tabel template_field
-        if(($request->nama_fields)!=NULL){
-            for ($i=0; $i < count($request->nama_fields); $i++) { 
                  TemplateField::create([
-                    'id_field' => $request->id_fields[$i],
+                    'id_field' => $request->id_field[$i],
                     'kode_layanan' => $request->kode_layanan,
-                    'nama_field' => $request->nama_fields[$i],
-                    'tipe_field' => $request->tipe_fields[$i]
+                    'nama_field' => $request->nama_field[$i],
+                    'tipe_field' => $request->tipe_field[$i]
                 ]);
             }
         }
@@ -210,7 +215,7 @@ class LayananController extends Controller
       catch(\Exception $e){
         DB::rollBack();
         dd($e);
-        return redirect('/layanan')->with('error','Gagal Memperbaharui Data Layanan'.$id);  
+        return redirect('/layanan')->with('error','Gagal Memperbaharui Data Layanan '.$id);  
       }
       DB::commit();
       return redirect('/layanan')->with('sukses','Layanan '.$id.' Berhasil Diperbaharui!!');

@@ -6,9 +6,6 @@
 * Copyright (c) 2019 creativeLabs Łukasz Holeczek
 * Licensed under MIT (https://coreui.io/license)
 -->
-<?php
-  date_default_timezone_set("ASIA/JAKARTA");
-?>
 <html lang="en">
   <head>
     <base href="./">
@@ -69,6 +66,7 @@
 
 
   <body class="c-app">
+
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
 
       @include('dashboard.shared.nav-builder')

@@ -43,7 +43,7 @@
                             <td>
                                 <span class="{{ $surat->statuss->class }}">
                                     <!-- <span class="badge badge-pill badge-light"> X </span> -->
-                                {{$status_surat[$surat->status]}}
+                                {{$surat->statuss->name}}
                                 </span><br>
                                 <small><font color='grey'>{{$surat->keterangan}}</small>
                             </td>

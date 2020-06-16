@@ -14,19 +14,25 @@ class DraftSuratController extends Controller
     public function index()
     {
         $surat = SuratKeluar::where('status',3)->orWhere('status',4)->orderBy('updated_at','DESC')->get();
-        $status_surat = config('surat_keluar.status_surat');
-        return view('admin.draftSurat.index',compact('surat','status_surat'));
+        return view('admin.draftSurat.index',compact('surat'));
     }
 
     //detail draft
     public function showDraft($id)
     {
         $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
-        $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        $field = Data::join('template_field','data.id_field','template_field.id_field')
-                     ->where('data.no_regist',$id)->get();
-        return view('admin.draftSurat.show',compact('surat','status_surat','dokumen','field'));
+        if($surat['status']!=3){
+            $dokumen = Dokumen::where('no_regist','=',$id)->get();
+            $field = Data::join('template_field','data.id_field','template_field.id_field')
+                         ->where('data.no_regist',$id)->get();
+            $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                                ->where('dokumen.no_regist',$id)
+                                ->count();
+            return view('admin.draftSurat.show',compact('surat','dokumen','field','count'));
+        }
+        else{
+            return view('dashboard.404'); 
+        }
     }
 
     public function verifikasiDraft($id)
@@ -68,15 +74,22 @@ class DraftSuratController extends Controller
       return redirect('/draft')->with('info','Draft '.$id.' ditolak karena '.$request->keterangan);
     }
 
-//penandatanganan
     public function getFile($id)
     {
         $surat = SuratKeluar::find($id);
-        $status_surat = config('surat_keluar.status_surat');
-        $dokumen = Dokumen::where('no_regist','=',$id)->get();
-        $field = Data::join('template_field','data.id_field','template_field.id_field')
-                     ->where('data.no_regist',$id)->get();
-        return view('admin.draftSurat.sign',compact('surat','status_surat','dokumen','thn','field'));
+
+        if($surat['status']==4){
+            $dokumen = Dokumen::where('no_regist','=',$id)->get();
+            $field = Data::join('template_field','data.id_field','template_field.id_field')
+                         ->where('data.no_regist',$id)->get();
+            $count = SuratKeluar::join('dokumen','surat_keluar.no_regist','dokumen.no_regist')
+                                ->where('dokumen.no_regist',$id)
+                                ->count();
+            return view('admin.draftSurat.sign',compact('surat','dokumen','field','count'));
+        }
+        else{
+            return view('dashboard.404'); 
+        }
     }
 
     public function sign(Request $request, $id)
@@ -87,7 +100,7 @@ class DraftSuratController extends Controller
             $surat = SuratKeluar::find($id);
 
             // create a Http writer (file name)
-            $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true); //SAVE KE LOCAL
+            $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true);                  //SAVE KE LOCAL
             // load document by filename
             $document = \SetaPDF_Core_Document::loadByFilename('../public/file/draft/'.$surat->nama_file, $writer);
 

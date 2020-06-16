@@ -1,14 +1,6 @@
 <?php
 
 return [
-	'status_surat' => [
-		0 => 'ditolak',
-		1 => 'belum diproses',
-		2 => 'revisi draft',
-		3 => 'drafting',
-		4 => 'menunggu tanda tangan', //hmm??
-		5 => 'selesai'
-	],
 	'penandatangan' => [
 		1 => 'Penanda tangan',
 		2 => 'Pemaraf'
@@ -35,6 +27,7 @@ return [
 		2 => 'date',
 		3 => 'number',
 		4 => 'email',
-		5 => 'password'
+		5 => 'password',
+		6 => 'table',
 	]
 ];

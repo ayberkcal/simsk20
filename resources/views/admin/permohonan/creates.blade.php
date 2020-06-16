@@ -42,7 +42,7 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Tujuan *</label>
                 <div class="col-md-10">
-                    <input type="text" class="form-control" name="tujuan" required autocomplete="off" />
+                    <input type="text" class="form-control" name="tujuan" required/>
                 </div>
             </div>   
             <input type="hidden" name="tgl_permohonan" value="{{now()}}"/>
@@ -50,10 +50,27 @@
             <div class="form-group row" id="field">
                 @foreach($field as $field)
                 <label class="col-md-2 col-form-label"><?php $a=$field->nama_field; $b=str_replace("_", " ", $a); $c=strlen($b); if ($c<=4) {$d=strtoupper($b);} else {$d=ucwords($b);} echo $d;?> *</label>
+                                                                                <!-- MASIH BELUM ADA IDE -->
+                    @if($field->tipe_field==6)              
+                    <div class="col-md-5">
+                        <select class="form-control" name="dataTable[]" id="anggota" required>
+                            <option value="" disabled selected>--Pilih--</option>
+                            @foreach($anggota as $anggota)
+                            <option value="{{$anggota->id_user}}">{{$anggota->nama}}</option>
+                            @endforeach
+                        </select><small>(termasuk Anda!)</small>
+                    </div>
+                    <div class="box-footer">
+                        <a id="hapus-anggota" class="btn btn-danger"><i class="icon-trash"></i></a>
+                        <a id="tambah-anggota" class="btn btn-success"><i class="icon-plus"></i></a>
+                      </div><br><br>
+                    @else
                     <div class="col-md-10">
                         <input hidden name="id_field[]" value="{{$field->id_field}}">
                         <input type="{{$tipe_field[$field->tipe_field]}}" class="form-control" name="data[]" required>
                     </div><br><br>
+                    @endif
+
                 @endforeach
             </div>  
             <div id="alert_size"></div>
