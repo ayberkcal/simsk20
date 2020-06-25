@@ -2,6 +2,15 @@
      
 @section('content') 
 <div class="col-md-12">
+  @if ($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+          @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+      </ul>
+    </div>
+  @endif
   <div class="nav-tabs-boxed">
     <a class="btn btn-ghost-danger float-right" href="{{ route('draft.index') }}"><i class="cil-action-undo"> Cancel </i></a>
     <ul class="nav nav-tabs" role="tablist">
@@ -110,6 +119,7 @@
                 </table>
               </div>  
               <div class="card-footer">
+
                 <div class="form-group row" style="padding-left: 15px">
                   <!-- route belum di set -->
                   <button class="sign-modal btn-sm btn-success" type="button" data-toggle="modal" data-target="#sign"><i class="cil-color-border"></i> Sign</button>
@@ -149,13 +159,13 @@
             @csrf
             @method('PUT')
             <!-- upload masih bermasalah -->
-              <div class="form-group row">
+              <!-- <div class="form-group row">
                 <label class="control-label col-md-4">Sertifikat digital *</label> 
                 <div class="col-sm-6">
                   <input type="file" class="form-control-file" id="sertifikat" name="sertifikat" accept=".p12"required/>
                   <small id="size"><font color='blue'>(ekstensi file = .p12)</font></small>
                 </div>
-              </div>
+              </div> -->
               <div class="form-group row">
                 <label class="control-label col-md-4">Password *</label>
                 <div class="col-sm-6">

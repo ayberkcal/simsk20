@@ -38,7 +38,7 @@
                           <tr>
                             <td>{{++$no}}</td>
                             <td>{{$surat->no_regist}}</td>
-                            <td>{{$surat->layanan->nama_layanan}}</td>
+                            <td>{{$surat->layanan->kode_sub}} - {{$surat->layanan->nama_layanan}}</td>
                             <td>{{$surat->user->nama}}</td>
                             <td>
                                 <span class="{{ $surat->statuss->class }}">

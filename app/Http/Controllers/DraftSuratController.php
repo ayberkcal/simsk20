@@ -21,7 +21,7 @@ class DraftSuratController extends Controller
     public function showDraft($id)
     {
         $surat = SuratKeluar::find($id);
-        if($surat['status']!=3){
+        if($surat['status']==3){
             $dokumen = Dokumen::where('no_regist','=',$id)->get();
             $field = Data::join('template_field','data.id_field','template_field.id_field')
                          ->where('data.no_regist',$id)->get();
@@ -40,7 +40,22 @@ class DraftSuratController extends Controller
       DB::beginTransaction();
       try{        
         $surat = SuratKeluar::findOrFail($id);
+        $penandatangan = SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
+                                    ->join('penandatangan','layanan.kode_layanan','penandatangan.kode_layanan')
+                                    ->join('user','penandatangan.id_user','user.id_user')
+                                    ->where('surat_keluar.no_regist',$id)
+                                    ->where('penandatangan.urutan',$surat['verifikasi'])
+                                    ->first();
+
+        $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor('../public/file/draft/'.$surat['nama_file']);
+
+                                                                                 //ATUR NOMOR PEMARAF BELUM
+        $templateProcessor->setImageValue('Pemaraf1', array('path' => '../public/user/ttd/'.$penandatangan['paraf'],'width' => '20', 'height' => '20', 'ratio' => false));  
+
+        $templateProcessor->saveAs('../public/file/draft/'.$id.'.docx');
+
         $surat->verifikasi = $surat->verifikasi-1;
+
         if ($surat->verifikasi==1) {
             $surat->status=4;
         }
@@ -48,6 +63,8 @@ class DraftSuratController extends Controller
       }
       catch(\Exception $e){
         DB::rollBack();
+        dd($e);
+        echo $penandatangan['paraf'];
         return redirect('/draft')->with('error','Gagal Diverifikasi!!');  
       }
       DB::commit();
@@ -99,6 +116,12 @@ class DraftSuratController extends Controller
             require_once('..\vendor\setasign\setapdf-signer_eval_ioncube_php7.1\library\SetaPDF\Autoload.php');
             $surat = SuratKeluar::find($id);
 
+            $ttd = SuratKeluar::join('layanan','surat_keluar.kode_layanan','layanan.kode_layanan')
+                              ->join('penandatangan','layanan.kode_layanan','penandatangan.kode_layanan')
+                              ->join('user','penandatangan.id_user','user.id_user')
+                              ->where('surat_keluar.no_regist',$id)
+                              ->first();
+
             // create a Http writer (file name)
             $writer = new \SetaPDF_Core_Writer_Http('../nama_file.pdf', true);                  //SAVE KE LOCAL
             // load document by filename
@@ -112,8 +135,8 @@ class DraftSuratController extends Controller
                 'Signature',                    // Name of the signature field
                 1,                              // put appearance on page 1
                 \SetaPDF_Signer_SignatureField::POSITION_LEFT_TOP,
-                array('x' => 270, 'y' => -520),   // Translate the position (x 50, y -80 -> 50 points right, 80 points down)
-                180,                            // Width - 180 points
+                array('x' => 350, 'y' => -720),   // Translate the position (x 50, y -80 -> 50 points right, 80 points down)
+                200,                            // Width - 180 points
                 70                              // Height - 50 points
             );
 
@@ -126,14 +149,16 @@ class DraftSuratController extends Controller
             // read certificate and private key from the PFX file
             $pkcs12 = array();
             $pfxRead = openssl_pkcs12_read(
-                file_get_contents($request->sertifikat), //klu diluar xampp gk kebaca //UBAH ALAMAT
+                //file_get_contents($request->sertifikat), //klu diluar xampp gk kebaca //UBAH ALAMAT
+                file_get_contents('../public/user/ttd/'.$ttd['sertifikat_digital']),
                 $pkcs12,
                 $request->password
             );
 
             // error handling
             if (false === $pfxRead) {
-                throw new \Exception('The certificate could not be read.');
+                //throw new \Exception('The certificate could not be read.');
+                return redirect('/draft/'.$id.'/getFile')->with('error','Password sertifikat salah!!');
             }
 
             // create e.g. a PAdES module instance
@@ -164,7 +189,7 @@ class DraftSuratController extends Controller
             $visibleAppearance->setBackgroundLogo($backgroundXObject, .5);
 
             // choose a document with a handwritten signature
-            $signatureDocument = \SetaPDF_Core_Document::loadByFilename('../public/file/ttd.pdf'); //UBAH ALAMAT
+            $signatureDocument = \SetaPDF_Core_Document::loadByFilename('../public/user/ttd/'.$ttd['tanda_tangan']); //UBAH ALAMAT
             $signatureXObject = $signatureDocument->getCatalog()->getPages()->getPage(1)->toXObject($document);
             // set the signature xObject as graphic
             $visibleAppearance->setGraphic($signatureXObject);

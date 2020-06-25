@@ -21,7 +21,7 @@
            <div class="card card-accent-success" >
             <div class="card uper" >
               <div class="card-body">
-                <table class="table table-responsive-sm">
+                <table class="table table-responsive-sm table-sm">
                   <tbody>
                     <tr>
                         <td width="300px"><strong>No. Regist</strong></td>

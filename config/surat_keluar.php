@@ -11,8 +11,13 @@ return [
 	],
 	'jenis_user' => [
 		1 => 'Mahasiswa',
-		2 => 'Dosen',
-		3 => 'Tenaga Pendidik'
+		2 => 'Tenaga Pendidik',
+		3 => 'Tenaga Kependidikan'
+	],
+	'status_pegawai' => [
+		0 => 'PNS',
+		1 => 'CPNS',
+		2 => 'Non PNS'
 	],
 	'jekel' => [
 		0 => 'Laki-Laki',

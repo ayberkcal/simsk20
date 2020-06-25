@@ -8,7 +8,7 @@
         <a class="btn btn-ghost-danger float-right" href="{{ route('permohonan.index') }}"><i class="cil-action-undo"> Cancel </i></a>
         </h4>
     </div>
-    <div class="card-body">
+    <div class="card-body" style="background: azure">
         <form method="post" action="{{ route('permohonan.store') }}" enctype="multipart/form-data">
         @csrf
             <div class="form-group row">
@@ -23,7 +23,7 @@
                     <select class="form-control" name="kode_layanan" id="layanan" onchange="goToTestPage(this.value)" required autofocus>
                       <option value="" disabled selected>--Pilih--</option>
                     @foreach($layanan as $layanan)
-                      <option value="{{$layanan->kode_layanan}}" {{$layanan->kode_layanan == $kode_layanan ? 'selected' : ''}}>{{$layanan->nama_layanan}}</option>
+                      <option value="{{$layanan->kode_layanan}}" {{$layanan->kode_layanan == $kode_layanan ? 'selected' : ''}}>{{$layanan->kode_sub}} - {{$layanan->nama_layanan}}</option>
                     @endforeach
                 </select>
                 </div>
@@ -47,7 +47,7 @@
             </div>   
             <input type="hidden" name="tgl_permohonan" value="{{now()}}"/>
             <input type="hidden" class="form-control" name="status" value="1"/>
-            <div class="form-group row" id="field">
+            <div class="form-group row" id="field" style="background: lavender">
                 @foreach($field as $field)
                 <label class="col-md-2 col-form-label"><?php $a=$field->nama_field; $b=str_replace("_", " ", $a); $c=strlen($b); if ($c<=4) {$d=strtoupper($b);} else {$d=ucwords($b);} echo $d;?> *</label>
                                                                                 <!-- MASIH BELUM ADA IDE -->

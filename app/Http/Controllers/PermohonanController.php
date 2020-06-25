@@ -282,6 +282,7 @@ class PermohonanController extends Controller
             $no = str_replace("[no_urut]", $nos+1, $a);
             //no surat:
             $thn = str_replace("[tahun]", date('Y'), $no);
+
             //----------------------------------------------------------------------akhir generate no surat
 
             //hitung jumlah dokumen yang belum diverifikasi
@@ -297,7 +298,9 @@ class PermohonanController extends Controller
 
             return view('admin.permohonan.prosesDraft',compact('surat','dokumen','field','thn','verify','count'));
         }
-
+        else{
+            return view('dashboard.404'); 
+        }
     }
 
     //verifikasi dokumen persyaratan
@@ -341,12 +344,14 @@ class PermohonanController extends Controller
                                     ->where('penandatangan.status','=','1')
                                     ->get();
         $user = SuratKeluar::join('user','surat_keluar.id_user','=','user.id_user')
-                                      ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
-                                      ->where('surat_keluar.no_regist','=',$id)
-                                      ->get();
+                           ->join('dosen_tendik','user.id_user','=','dosen_tendik.id_user')
+                           ->where('surat_keluar.no_regist','=',$id)
+                           ->get();
+        $jns_user = SuratKeluar::join('user','surat_keluar.id_user','=','user.id_user')
+                               ->where('surat_keluar.no_regist','=',$id)
+                               ->first();
         $dataTambahan = Data::join('template_field','data.id_field','template_field.id_field')
                             ->where('data.no_regist',$id)->get();
-
         $template = Layanan::where('kode_layanan',$surat['kode_layanan'])->first();
 
         //------------------------------------------------------------------------------mulai generate surat 
@@ -376,10 +381,11 @@ class PermohonanController extends Controller
         //data pemohon yang diambil dari tabel dosen_tendik  
         foreach ($user as $u) {
             $templateProcessor->setValues([
-                'pangkat'=>$u->pangkat,
-                'golongan'=>$u->golongan,
                 'jabatan'=>$u->jabatan,
                 'sub_bagian'=>$u->sub_bagian,
+                'status_pegawai'=>$u->status_pegawai,
+                'pangkat'=>$u->pangkat,
+                'golongan'=>$u->golongan,
             ]);
         }
 
@@ -398,13 +404,13 @@ class PermohonanController extends Controller
         }
 
         //set thn akademik dan semester saat ini
-        $bln=date('m');
-        if ($bln<="06") {
+        $bulan=date('m');
+        if ($bulan<="06") {
             $thn_akademik=(date('Y')-1).'/'.date('Y');
-            $semester="GENAP";}
-        elseif ($bln<="12") {
+            $semester="Genap";}
+        elseif ($bulan<="12") {
             $thn_akademik=date('Y').'/'.(date('Y')+1);
-            $semester="GANJIL";}
+            $semester="Ganjil";}
 
         //set jurusan
         $nim=$surat->id_user;
@@ -415,18 +421,26 @@ class PermohonanController extends Controller
             $jurusan="Sistem Informasi";}
         else{$jurusan="-";}
 
+        //set jenis user
+        if($jns_user['jenis_user']==1){$jenis_user="Mahasiswa";}
+        elseif($jns_user['jenis_user']==2){$jenis_user="Tenaga Pendidik";}
+        elseif($jns_user['jenis_user']==3){$jenis_user="Tenaga Kependidikan";}
+
         $templateProcessor->setValues([
             'thn_akademik' => $thn_akademik,
             'semester' => $semester,
             'fakultas'=>'Teknologi Infomasi',
             'jurusan' => $jurusan,
+            'jenis_user' => $jenis_user,
+            'bulan' => $bulan,
+            'tahun' => date('Y'),
         ]);
                                                                                             //CONTOH CLONING
-        $values = [
-            ['userId' => 1, 'userName' => 'Ami', 'userAddress' => '1511521007'],
-            ['userId' => 2, 'userName' => 'Tenti', 'userAddress' => '1511522007'],
-        ];
-        $templateProcessor->cloneRowAndSetValues('userId',$values);
+        // $values = [
+        //     ['userId' => 1, 'userName' => 'Ami', 'userAddress' => '1511521007'],
+        //     ['userId' => 2, 'userName' => 'Tenti', 'userAddress' => '1511522007'],
+        // ];
+        // $templateProcessor->cloneRowAndSetValues('userId',$values);
 
         //generate to word
         $templateProcessor->saveAs('../public/file/draft/'.$id.'.docx');

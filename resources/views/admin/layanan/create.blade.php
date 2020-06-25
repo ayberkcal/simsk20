@@ -34,7 +34,7 @@
                         <select class="form-control" name="kode_sub" required autofocus>
                           <option value="" disabled selected>--Pilih--</option>
                         @foreach($sub as $sub)
-                          <option value="{{$sub->kode_sub}}">{{$sub->sub_klasifikasi}}</option>
+                          <option value="{{$sub->kode_sub}}">{{$sub->kode_sub}}-{{$sub->sub_klasifikasi}}</option>
                         @endforeach
                     </select>
                     </div>

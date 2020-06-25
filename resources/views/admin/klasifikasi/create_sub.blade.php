@@ -4,7 +4,7 @@
 <div class="card">
         <div class="card-header">
             <h4 class="right_col">
-              Sub-Klasifikasi <small class="text-muted">Tambah Data</small>
+              Sub Klasifikasi <small class="text-muted">Tambah Data</small>
               <a class="btn btn-ghost-danger float-right" href="{{ route('klasifikasi.sub',['klasifikasi'=>$klas->kode_klasifikasi]) }}"><i class="cil-action-undo"> Cancel </i></a>
             </h4>
         </div>

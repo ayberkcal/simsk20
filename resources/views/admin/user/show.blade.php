@@ -57,9 +57,15 @@
                             <td>: {{ $dt->sub_bagian }}</td>
                         </tr>
                         <tr>
+                            <td><strong>Status Pegawai</strong></td>
+                            <td>: {{ $statusp[$dt->status_pegawai] }}</td>
+                        </tr>
+                        @if($dt->status_pegawai!=2)
+                        <tr>
                             <td><strong>Pangkat/ Golongan</strong></td>
                             <td>: {{ $dt->pangkat }}/ {{ $dt->golongan}}</td>
                         </tr>
+                        @endif
                       </tbody>
                     </table>
                     @endif

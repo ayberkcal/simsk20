@@ -9,7 +9,7 @@
         </h4>
     </div>
     <div id="alert_size"></div>
-    <div class="card-body">
+    <div class="card-body" style="background: azure">
         <form method="post" action="{{ route('permohonan.store') }}" enctype="multipart/form-data">
         @csrf
             <div class="form-group row">
@@ -24,7 +24,7 @@
                     <select class="form-control" name="kode_layanan" onchange="goToTestPage(this.value)" required autofocus>
                       <option value="" disabled selected>--Pilih--</option>
                     @foreach($layanan as $layanan)
-                      <option value="{{$layanan->kode_layanan}}">{{$layanan->nama_layanan}}</option>
+                      <option value="{{$layanan->kode_layanan}}">{{$layanan->kode_sub}} - {{$layanan->nama_layanan}}</option>
                     @endforeach
                 </select>
                 </div>

@@ -24,8 +24,9 @@ class UserController extends Controller
     {
         $jekels = config('surat_keluar.jekel');
         $jns_user = config('surat_keluar.jenis_user');
+        $statusp = config('surat_keluar.status_pegawai');
 
-        return view('admin.user.create', compact('jekels','jns_user'));
+        return view('admin.user.create', compact('jekels','jns_user','statusp'));
     }
 
     public function test()                                                              //HAPUS
@@ -89,14 +90,21 @@ class UserController extends Controller
         if($request->jenis_user!=1){
             $validasi=$request->validate([
                 'jabatan' => 'required',
-                'pangkat' => 'required',
-                'golongan' => 'required'
+                'status_pegawai' => 'required'
             ]);
+
+            if($request->status_pegawai<=1){
+                $validasi=$request->validate([
+                    'pangkat' => 'required',
+                    'golongan' => 'required'
+                ]);
+            }
 
             $dt = new DosenTendik();
             $dt->id_user = $request->id_user;
             $dt->jabatan = $request->jabatan;
             $dt->sub_bagian = $request->sub_bagian;
+            $dt->status_pegawai =$request->status_pegawai;
             $dt->pangkat = $request->pangkat;
             $dt->golongan = $request->golongan;
             $dt->save();
@@ -110,9 +118,10 @@ class UserController extends Controller
         $user = User::find($id);
         $jns_user = config('surat_keluar.jenis_user');
         $jekels = config('surat_keluar.jekel');
+        $statusp = config('surat_keluar.status_pegawai');
         $dt = DosenTendik::find($id);
 
-        return view('admin.user.show', compact('user','jns_user','jekels','dt'));
+        return view('admin.user.show', compact('user','jns_user','jekels','dt','statusp'));
     }
 
     public function edit($id)
@@ -120,9 +129,10 @@ class UserController extends Controller
         $user = User::find($id);
         $jns_user = config('surat_keluar.jenis_user');
         $jekels = config('surat_keluar.jekel');
+        $statusp = config('surat_keluar.status_pegawai');
         $dt = DosenTendik::find($id);
 
-        return view('admin.user.edit',compact('user','jns_user','jekels','dt'));
+        return view('admin.user.edit',compact('user','jns_user','jekels','dt','statusp'));
     }
 
     public function update(Request $request, $id)
@@ -185,7 +195,7 @@ class UserController extends Controller
             $user->paraf = $user->paraf;
         }
         else{
-            if ($user->foto!=NULL) {
+            if ($user->paraf!=NULL) {
                 unlink('user/ttd/'.$user->paraf); //menghapus file lama
             }
             $file4 = $request->file('paraf');
@@ -199,9 +209,15 @@ class UserController extends Controller
         if($request->jenis_user!=1){
             $validasi=$request->validate([
                 'jabatan' => 'required',
-                'pangkat' => 'required',
-                'golongan' => 'required'
+                'status_pegawai' => 'required'
             ]);
+
+            if($request->status_pegawai<=1){
+                $validasi=$request->validate([
+                    'pangkat' => 'required',
+                    'golongan' => 'required'
+                ]);
+            }
 
             $dt = DosenTendik::find($id);
             if (DosenTendik::where('id_user',$id)->count()==0) {

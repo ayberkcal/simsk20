@@ -70,6 +70,17 @@
                     <input type='text' class='form-control' name='sub_bagian' value="{{old('sub_bagian')}}"/>
                 </div>
             </div>
+            <div class='form-group row' id="statusp">
+                <label class='col-md-2 col-form-label'>Status Pegawai *</label>
+                <div class='col-md-4'>
+                    <select class="form-control" name="status_pegawai" id="statusp">
+                            <option value="" disabled selected>--Pilih--</option>
+                        @foreach($statusp as $key=>$value)
+                            <option value="{{$key}}">{{$value}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
             <div class='form-group row' id="pangkat">
                 <label class='col-md-2 col-form-label'>Pangkat *</label>
                 <div class='col-md-4'>
@@ -143,7 +154,7 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Paraf</label>
                 <div class="col-md-4">
-                    <input type="file" class="form-control" name="paraf" accept=".pdf"/><small>(ekstensi .pdf)</small>
+                    <input type="file" class="form-control" name="paraf" accept="image/*"/><small>(ekstensi .png)</small>
                 </div>
             </div>
             <div class="card-footer">
@@ -164,14 +175,24 @@
         if (($(this).val() == 2)||($(this).val() == 3)) {
           $("div[id=dt]").show();
           $("div[id=jabatan]").show();
-          $("div[id=pangkat]").show(); 
+          $("div[id=statusp]").show(); 
         } else { 
           $("div[id=dt]").hide();
           $("div[id=jabatan]").hide();
+          $("div[id=statusp]").hide();
           $("div[id=pangkat]").hide();
         } 
       }); 
       $("select[id=jenis_user]").trigger("change");
+
+      $("select[id=statusp]").on("change", function() { 
+        if (($(this).val() == 0)||($(this).val() == 1)) {
+          $("div[id=pangkat]").show(); 
+        } else { 
+          $("div[id=pangkat]").hide();
+        } 
+      }); 
+      $("select[id=statusp]").trigger("change");
     });
 </script>
 @endsection
